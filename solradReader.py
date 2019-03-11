@@ -37,22 +37,59 @@
  #4  std_uvb(j)
 
 #example
+#   0   1     2    3   4    5   6       7     8        9       10      11        12
 # year,jday,month,day,hour,min,dt,     zen, dw_psp,qc_dwpsp, direct,qc_direct, diffuse,qc_diffuse, uvb,qc_uvb, uvb_temp,qc_uvb_temp, std_dw_psp,std_direct,std_diffuse,std_uvb
 #2019   1    1    1   0    0   0.000   81.55  79.6   0         229.6   0          55.8      0       3.4   0      42.7       0           0.475      0.581      0.358      0.042
 
 import pandas as pd
 import re
+import numpy as np
+import matplotlib.pyplot as plt
 
 #Opens the file
-file = open('solrad_data\\hnx19002.dat', 'r')
+file = open('solrad_data\\hnx19009.dat', 'r')
 
 #Reads the file
 raw_file_contents = file.read()
 
-file_contents = raw_file_contents.split(" ")
+#Splits the contents of the file by spaces
+split_file_contents = raw_file_contents.split(" ")
 
-for item in file_contents:
-    if item == '':
-        file_contents.remove(item)
+cleaned_file_contents = []
 
-print(file_contents)
+#Removes the empty items in the array
+for item in split_file_contents:
+    if item != '':
+        cleaned_file_contents.append(item)
+
+offset = 7
+row = 0
+rowLength = 22
+column = 0
+
+ordered_row = [];
+ordered_file_contents = [];
+
+for i in range(0, len(cleaned_file_contents)-8):
+    row = i % rowLength
+    item = cleaned_file_contents[i+offset]
+
+    ordered_row.append(float(item))
+
+    #print(row, column, item)
+
+    if(row == rowLength-1):
+        column +=1
+
+        ordered_file_contents.append(ordered_row)
+        ordered_row = []
+
+ordered_file_contents = np.array(ordered_file_contents)
+
+plt.plot(ordered_file_contents[:,10])
+plt.plot(ordered_file_contents[:,12])
+plt.ylabel('Diffuse')
+plt.show()
+
+#Closes file
+file.close()
