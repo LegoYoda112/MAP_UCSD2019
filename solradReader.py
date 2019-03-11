@@ -1,5 +1,6 @@
 ##   ---- KEY ---- (from README_SOLRAD.txt)
 
+## - In header -
 #station_name	character	station name, e. g., Goodwin Creek
 #latitude	real	latitude in decimal degrees (e. g., 40.80)
 #longitude	real	longitude in decimal degrees (e. g., 105.12)
@@ -37,4 +38,21 @@
 
 #example
 # year,jday,month,day,hour,min,dt,     zen, dw_psp,qc_dwpsp, direct,qc_direct, diffuse,qc_diffuse, uvb,qc_uvb, uvb_temp,qc_uvb_temp, std_dw_psp,std_direct,std_diffuse,std_uvb
-#2019   1    1    1   0    0   0.000  81.55  79.6   0         229.6   0          55.8      0       3.4   0      42.7       0           0.475      0.581      0.358      0.042
+#2019   1    1    1   0    0   0.000   81.55  79.6   0         229.6   0          55.8      0       3.4   0      42.7       0           0.475      0.581      0.358      0.042
+
+import pandas as pd
+import re
+
+#Opens the file
+file = open('solrad_data\\hnx19002.dat', 'r')
+
+#Reads the file
+raw_file_contents = file.read()
+
+file_contents = raw_file_contents.split(" ")
+
+for item in file_contents:
+    if item == '':
+        file_contents.remove(item)
+
+print(file_contents)
