@@ -37,7 +37,7 @@
  #4  std_uvb(j)
 
 #example
-#   0   1     2    3   4    5   6       7     8        9       10      11        12        13      14    15      16        17           18         19          20
+#   0   1     2    3   4    5   6       7     8        9       10      11        12        13      14    15      16        17           18         19          20        21  22
 # year,jday,month,day,hour,min,dt,     zen, dw_psp,qc_dwpsp, direct,qc_direct, diffuse,qc_diffuse, uvb,qc_uvb, uvb_temp,qc_uvb_temp, std_dw_psp,std_direct,std_diffuse,std_uvb
 #2019   1    1    1   0    0   0.000   81.55  79.6   0         229.6   0          55.8      0       3.4   0      42.7       0           0.475      0.581      0.358      0.042
 
@@ -96,6 +96,7 @@ def readSolradDat (filename):
     file.close()
 
     return ordered_file_contents
+
 solradData = np.array(readSolradDat('solrad_data\\hnx19065.dat'))
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19066.dat'),axis = 0)
 
