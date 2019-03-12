@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from datetime import datetime
+from datetime import timedelta
 
 csv_array = pd.read_csv('the_weather_channel\\the_weather_channel.csv').as_matrix()
 
@@ -21,12 +23,21 @@ ordered_hourly = np.array(ordered_hourly)
 cloudy_array = []
 for hour in ordered_hourly:
     cloudPercentage = float(hour[0][5].replace('%',''))
-    timeStamp = hour[0][1]
+    timeStamp = datetime.strptime(hour[0][1], '%Y-%m-%d %H:%M:%S.%f')
 
     cloudy_array.append([timeStamp, cloudPercentage])
 cloudy_array = np.array(cloudy_array)
 
-print(cloudy_array[:,0])
+hourly_offset = 1
+forecast_cloudy_array = []
+for hour in ordered_hourly:
+    cloudPercentage = float(hour[hourly_offset][5].replace('%',''))
+    timeStamp = datetime.strptime(hour[hourly_offset][1], '%Y-%m-%d %H:%M:%S.%f') + timedelta(hours=hourly_offset)
 
-plt.plot(cloudy_array[:,1])
+    forecast_cloudy_array.append([timeStamp, cloudPercentage])
+forecast_cloudy_array = np.array(forecast_cloudy_array)
+
+
+plt.plot(cloudy_array[:,0],cloudy_array[:,1])
+plt.plot(forecast_cloudy_array[:,0],forecast_cloudy_array[:,1])
 plt.show()
