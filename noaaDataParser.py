@@ -20,7 +20,7 @@ for i in range(0,len(csv_array)-1):
         hourly_forecast = []
 
     hour_forecast = csv_array[i]
-    hour_forecast = np.append(hour_forecast, datetime.strptime(csv_array[i][2][:-6], '%Y-%m-%dT%H:%M:%S'))
+    hour_forecast = np.append(hour_forecast, datetime.strptime(csv_array[i][2][:-6], '%Y-%m-%dT%H:%M:%S')) 
 
     hourly_forecast.append(hour_forecast)
 

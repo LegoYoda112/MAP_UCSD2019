@@ -60,44 +60,62 @@ def readSolradDat (filename):
 
     return ordered_file_contents
 
-solradData = np.array(readSolradDat('solrad_data\\hnx19057.dat'))
-solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19058.dat'),axis = 0)
+solradData = np.array(readSolradDat('solrad_data\\hnx19058.dat'))
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19059.dat'),axis = 0)
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19060.dat'),axis = 0)
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19061.dat'),axis = 0)
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19062.dat'),axis = 0)
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19063.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19064.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19065.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19066.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19067.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19068.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19069.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19070.dat'),axis = 0)
 
 
-#The weather channel ---------------------
-csv_array = pd.read_csv('the_weather_channel\\the_weather_channel.csv').as_matrix()
+#NOAA ---------------------
+csv_array = pd.read_csv('noaa\\noaa.csv').as_matrix()
 
 ordered_hourly = []
 hourly_forecast = []
+hour_forecast = []
 
-hours_per_forecast = 16
+hours_per_forecast = 168
+
+#2019-02-26T15:00:00-08:00
 
 for i in range(0,len(csv_array)-1):
     if((i+1) % hours_per_forecast == 0):
         ordered_hourly.append(np.array(hourly_forecast))
         hourly_forecast = []
 
-    hourly_forecast.append(csv_array[i])
+    hour_forecast = csv_array[i]
+    hour_forecast = np.append(hour_forecast, datetime.strptime(csv_array[i][2][:-6], '%Y-%m-%dT%H:%M:%S') + timedelta(hours=7) )
+
+    hourly_forecast.append(hour_forecast)
+
 
 ordered_hourly = np.array(ordered_hourly)
 
-cloudy_array = []
-for hour in ordered_hourly:
-    cloudPercentage = float(hour[0][6].replace('%',''))
-    timeStamp = datetime.strptime(hour[0][1], '%Y-%m-%d %H:%M:%S.%f')
+print(ordered_hourly[0][0][3])
 
-    cloudy_array.append([timeStamp, cloudPercentage])
-cloudy_array = np.array(cloudy_array)
+noaa_data_array = []
+for hours in ordered_hourly:
+    timeStamp = hours[0][8]
+
+    noaa_data_array.append([timeStamp, float(hours[0][3]), float(hours[0][4]), float(hours[0][5]), float(hours[0][6]), float(hours[0][7])])
+noaa_data_array = np.array(noaa_data_array)
 
 plt.plot(solradData[:,22], solradData[:,10], label = 'Direct')
-#plt.plot(solradData[:,22], solradData[:,12], label = 'Diffuse')
+plt.plot(solradData[:,22], solradData[:,12], label = 'Diffuse')
 
-plt.plot(cloudy_array[:,0],cloudy_array[:,1]*3)
+plt.plot(noaa_data_array[:,0],noaa_data_array[:,1]*10, label = 'temp')
+plt.plot(noaa_data_array[:,0],noaa_data_array[:,2]*10, label = 'cloud-amount')
+#plt.plot(noaa_data_array[:,0],noaa_data_array[:,3]*3, label = 'wind-speed')
+#plt.plot(noaa_data_array[:,0],noaa_data_array[:,4]*3, label = 'humidity')
+#plt.plot(noaa_data_array[:,0],noaa_data_array[:,5]*3, label = 'probability_of_precipitation')
 
 plt.legend(loc = 'upper left')
 plt.ylabel('Watts m^-2')
