@@ -25,7 +25,7 @@ directoryPath = '%s/%s' % (os.getcwd(), directoryName)
 os.chdir(directoryPath)
 
 dateStart = 19001;
-dateEnd = 19040;
+dateEnd = 19065;
 
 currentDownloadDate = dateStart;
 
