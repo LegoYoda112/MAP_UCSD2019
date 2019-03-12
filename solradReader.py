@@ -96,14 +96,13 @@ def readSolradDat (filename):
     file.close()
 
     return ordered_file_contents
-solradData = np.array(readSolradDat('solrad_data\\hnx19050.dat'))
-solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19051.dat'),axis = 0)
-solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19052.dat'),axis = 0)
-solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19053.dat'),axis = 0)
-solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19054.dat'),axis = 0)
+solradData = np.array(readSolradDat('solrad_data\\hnx19065.dat'))
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19066.dat'),axis = 0)
 
-plt.plot(solradData[:,10])
-plt.plot(solradData[:,12])
+plt.plot(solradData[:,10], label = 'Direct')
+plt.plot(solradData[:,12], label = 'Diffuse')
+plt.legend(loc = 'upper left')
 print(solradData[1])
-plt.ylabel('Diffuse')
+plt.ylabel('Watts m^-2')
+plt.xlabel('Time')
 plt.show()
