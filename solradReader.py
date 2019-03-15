@@ -97,11 +97,50 @@ def readSolradDat (filename):
 
     return ordered_file_contents
 
-solradData = np.array(readSolradDat('solrad_data\\hnx19065.dat'))
+solradData = np.array(readSolradDat('solrad_data\\hnx19058.dat'))
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19059.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19060.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19061.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19062.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19063.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19064.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19065.dat'),axis = 0)
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19066.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19067.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19068.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19069.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19070.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19071.dat'),axis = 0)
 
-plt.plot(solradData[:,10], label = 'Direct')
-plt.plot(solradData[:,12], label = 'Diffuse')
+hourlySolradData = []
+
+for i in range(0, len(solradData)/60):
+    hourOfSolradData = []
+
+    for j in range(0, 60):
+        direct = solradData[(i*60)+j][10]
+        diffuse = solradData[(i*60)+j][12]
+        hourOfSolradData.append(np.array([direct, diffuse]))
+        #print(solradData[(i*60)+j][10])
+        #print(solradData[(i*60)+j][5])
+        #print((i*60)+j)
+
+    hourOfSolradData = np.array(hourOfSolradData)
+    directAvg = np.average(hourOfSolradData[:,1])
+    #print(np.std(hourOfSolradData))
+    hourlySolradData.append(directAvg)
+    #directStd = 0
+    #diffuseAvg = 0
+    #diffuseStd = 0
+
+    #timeStamp = 0
+
+hourlySolradData = np.array(hourlySolradData)
+print(hourlySolradData)
+
+
+plt.plot(hourlySolradData[:], label = 'Direct')
+#plt.plot(solradData[:,12], label = 'Diffuse')
 plt.legend(loc = 'upper left')
 print(solradData[1])
 plt.ylabel('Watts m^-2')

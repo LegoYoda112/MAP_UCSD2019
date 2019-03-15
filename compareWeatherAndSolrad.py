@@ -73,7 +73,7 @@ solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19067.dat'),ax
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19068.dat'),axis = 0)
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19069.dat'),axis = 0)
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19070.dat'),axis = 0)
-
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19071.dat'),axis = 0)
 
 #NOAA ---------------------
 csv_array = pd.read_csv('noaa\\noaa.csv').as_matrix()
@@ -113,9 +113,9 @@ plt.plot(solradData[:,22], solradData[:,12], label = 'Diffuse')
 
 plt.plot(noaa_data_array[:,0],noaa_data_array[:,1]*10, label = 'temp')
 plt.plot(noaa_data_array[:,0],noaa_data_array[:,2]*10, label = 'cloud-amount')
-#plt.plot(noaa_data_array[:,0],noaa_data_array[:,3]*3, label = 'wind-speed')
-#plt.plot(noaa_data_array[:,0],noaa_data_array[:,4]*3, label = 'humidity')
-#plt.plot(noaa_data_array[:,0],noaa_data_array[:,5]*3, label = 'probability_of_precipitation')
+plt.plot(noaa_data_array[:,0],noaa_data_array[:,3]*3, label = 'wind-speed')
+plt.plot(noaa_data_array[:,0],noaa_data_array[:,4]*3, label = 'humidity')
+plt.plot(noaa_data_array[:,0],noaa_data_array[:,5]*3, label = 'probability_of_precipitation')
 
 plt.legend(loc = 'upper left')
 plt.ylabel('Watts m^-2')
