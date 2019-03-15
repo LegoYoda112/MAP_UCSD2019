@@ -75,6 +75,31 @@ solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19069.dat'),ax
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19070.dat'),axis = 0)
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19071.dat'),axis = 0)
 
+hourlySolradData = []
+
+for i in range(0, len(solradData)/60):
+    hourOfSolradData = []
+    timeStamp = solradData[(i*60)][22]
+    for j in range(0, 60):
+        direct = solradData[(i*60)+j][10]
+        diffuse = solradData[(i*60)+j][12]
+        hourOfSolradData.append(np.array([direct, diffuse]))
+        #print(solradData[(i*60)+j][10])
+        #print(solradData[(i*60)+j][5])
+        #print((i*60)+j)
+
+    hourOfSolradData = np.array(hourOfSolradData)
+    directAvg = np.average(hourOfSolradData[:,0])
+    directStd = np.std(hourOfSolradData[:,0])
+    diffuseAvg = np.average(hourOfSolradData[:,1])
+    diffuseStd = np.std(hourOfSolradData[:,1])
+
+    hourlySolradData.append([timeStamp, directAvg, directStd, diffuseAvg, diffuseStd])
+
+    #timeStamp = 0
+
+hourlySolradData = np.array(hourlySolradData)
+
 #NOAA ---------------------
 csv_array = pd.read_csv('noaa\\noaa.csv').as_matrix()
 
@@ -108,14 +133,14 @@ for hours in ordered_hourly:
     noaa_data_array.append([timeStamp, float(hours[0][3]), float(hours[0][4]), float(hours[0][5]), float(hours[0][6]), float(hours[0][7])])
 noaa_data_array = np.array(noaa_data_array)
 
-plt.plot(solradData[:,22], solradData[:,10], label = 'Direct')
-plt.plot(solradData[:,22], solradData[:,12], label = 'Diffuse')
+plt.plot(hourlySolradData[:,0], hourlySolradData[:,1], label = 'Direct')
+plt.plot(hourlySolradData[:,0], hourlySolradData[:,2], label = 'Diffuse')
 
-plt.plot(noaa_data_array[:,0],noaa_data_array[:,1]*10, label = 'temp')
+#plt.plot(noaa_data_array[:,0],noaa_data_array[:,1]*10, label = 'temp')
 plt.plot(noaa_data_array[:,0],noaa_data_array[:,2]*10, label = 'cloud-amount')
-plt.plot(noaa_data_array[:,0],noaa_data_array[:,3]*3, label = 'wind-speed')
-plt.plot(noaa_data_array[:,0],noaa_data_array[:,4]*3, label = 'humidity')
-plt.plot(noaa_data_array[:,0],noaa_data_array[:,5]*3, label = 'probability_of_precipitation')
+#plt.plot(noaa_data_array[:,0],noaa_data_array[:,3]*3, label = 'wind-speed')
+#plt.plot(noaa_data_array[:,0],noaa_data_array[:,4]*3, label = 'humidity')
+#plt.plot(noaa_data_array[:,0],noaa_data_array[:,5]*3, label = 'probability_of_precipitation')
 
 plt.legend(loc = 'upper left')
 plt.ylabel('Watts m^-2')

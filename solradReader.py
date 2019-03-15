@@ -45,6 +45,7 @@ import pandas as pd
 import re
 import numpy as np
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 def readSolradDat (filename):
     print 'Reading ' + filename
@@ -87,6 +88,9 @@ def readSolradDat (filename):
         if(row == rowLength-1):
             column +=1
 
+            timeStamp = datetime(int(ordered_row[0]),int(ordered_row[2]),int(ordered_row[3]),int(ordered_row[4]),int(ordered_row[5]))
+            ordered_row.append(timeStamp)
+
             ordered_file_contents.append(ordered_row)
             ordered_row = []
 
@@ -116,7 +120,7 @@ hourlySolradData = []
 
 for i in range(0, len(solradData)/60):
     hourOfSolradData = []
-
+    timeStamp = solradData[(i*60)][22]
     for j in range(0, 60):
         direct = solradData[(i*60)+j][10]
         diffuse = solradData[(i*60)+j][12]
@@ -126,22 +130,23 @@ for i in range(0, len(solradData)/60):
         #print((i*60)+j)
 
     hourOfSolradData = np.array(hourOfSolradData)
-    directAvg = np.average(hourOfSolradData[:,1])
-    #print(np.std(hourOfSolradData))
-    hourlySolradData.append(directAvg)
-    #directStd = 0
-    #diffuseAvg = 0
-    #diffuseStd = 0
+    directAvg = np.average(hourOfSolradData[:,0])
+    directStd = np.std(hourOfSolradData[:,0])
+    diffuseAvg = np.average(hourOfSolradData[:,1])
+    diffuseStd = np.std(hourOfSolradData[:,1])
+
+    hourlySolradData.append([timeStamp, directAvg, directStd, diffuseAvg, diffuseStd])
 
     #timeStamp = 0
 
 hourlySolradData = np.array(hourlySolradData)
-print(hourlySolradData)
 
 
-plt.plot(hourlySolradData[:], label = 'Direct')
-#plt.plot(solradData[:,12], label = 'Diffuse')
-plt.legend(loc = 'upper left')
+plt.plot(hourlySolradData[:,4], hourlySolradData[:,0], label = 'Direct')
+plt.plot(hourlySolradData[:,4], hourlySolradData[:,1], label = 'Direct STD')
+plt.plot(hourlySolradData[:,4], hourlySolradData[:,2], label = 'Diffuse')
+plt.plot(hourlySolradData[:,4], hourlySolradData[:,3], label = 'Diffuse STD')
+#plt.legend(loc = 'upper left')
 print(solradData[1])
 plt.ylabel('Watts m^-2')
 plt.xlabel('Time')
