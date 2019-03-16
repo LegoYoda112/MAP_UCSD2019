@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
 from datetime import timedelta
+import pvlib as pv
 
 #SOLRAD -----------------
 def readSolradDat (filename):
@@ -74,6 +75,8 @@ solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19068.dat'),ax
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19069.dat'),axis = 0)
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19070.dat'),axis = 0)
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19071.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19072.dat'),axis = 0)
+solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19073.dat'),axis = 0)
 
 hourlySolradData = []
 
@@ -124,20 +127,39 @@ for i in range(0,len(csv_array)-1):
 
 ordered_hourly = np.array(ordered_hourly)
 
-print(ordered_hourly[0][0][3])
+#hours
+predicted_lookahead = 24*4
 
 noaa_data_array = []
 for hours in ordered_hourly:
-    timeStamp = hours[0][8]
+    timeStamp = hours[predicted_lookahead][8]
 
-    noaa_data_array.append([timeStamp, float(hours[0][3]), float(hours[0][4]), float(hours[0][5]), float(hours[0][6]), float(hours[0][7])])
+    noaa_data_array.append([timeStamp, float(hours[predicted_lookahead][3]), float(hours[predicted_lookahead][4]), float(hours[predicted_lookahead][5]), float(hours[predicted_lookahead][6]), float(hours[predicted_lookahead][7])])
 noaa_data_array = np.array(noaa_data_array)
 
+
+#CLEAR SKY ------------------
+# sets the location: latitude, longitude, and time zone
+hnxloc = pv.location.Location(36.31357, -119.63164, 'US/Pacific')
+#times = pd.DatetimeIndex(start='2019-02-27', end='2019-03-13', freq='60min')
+times = pd.DatetimeIndex(noaa_data_array[:,0])
+print(times)
+
+# computes the clear sky model using a popular model
+cs = hnxloc.get_clearsky(times, model='ineichen', linke_turbidity=3)
+
+
+#PLOTTING --------------------
+
 plt.plot(hourlySolradData[:,0], hourlySolradData[:,1], label = 'Direct')
-plt.plot(hourlySolradData[:,0], hourlySolradData[:,2], label = 'Diffuse')
+#plt.plot(hourlySolradData[:,0], hourlySolradData[:,2], label = 'Diffuse')
+
+#plt.plot(times, cs['dhi']*10, label = 'Clear sky')
+
+plt.plot(times, cs['dhi']*(1 - noaa_data_array[:,2]/100)*10, label = 'Predicted clear')
 
 #plt.plot(noaa_data_array[:,0],noaa_data_array[:,1]*10, label = 'temp')
-plt.plot(noaa_data_array[:,0],noaa_data_array[:,2]*10, label = 'cloud-amount')
+#plt.plot(noaa_data_array[:,0],noaa_data_array[:,2], label = 'cloud-amount')
 #plt.plot(noaa_data_array[:,0],noaa_data_array[:,3]*3, label = 'wind-speed')
 #plt.plot(noaa_data_array[:,0],noaa_data_array[:,4]*3, label = 'humidity')
 #plt.plot(noaa_data_array[:,0],noaa_data_array[:,5]*3, label = 'probability_of_precipitation')
