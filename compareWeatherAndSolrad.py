@@ -77,6 +77,7 @@ solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19070.dat'),ax
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19071.dat'),axis = 0)
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19072.dat'),axis = 0)
 solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19073.dat'),axis = 0)
+#solradData = np.append(solradData, readSolradDat('solrad_data\\hnx19074.dat'),axis = 0)
 
 hourlySolradData = []
 
@@ -128,7 +129,7 @@ for i in range(0,len(csv_array)-1):
 ordered_hourly = np.array(ordered_hourly)
 
 #hours
-predicted_lookahead = 24*4
+predicted_lookahead = 24
 
 noaa_data_array = []
 for hours in ordered_hourly:
