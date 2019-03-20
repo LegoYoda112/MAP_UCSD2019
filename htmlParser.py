@@ -9,18 +9,18 @@ import lxml
 import matplotlib.pyplot as plt
 import os
 
-print(os.getcwd())
+print('Running...')
+
+
 
 #Gets the current date
 datetime_object = datetime.datetime.now()
 formattedTime = datetime_object.strftime('%m-%d-%Y_%H-%M')
 print(datetime_object)
 
-
-
 #------Weather.com------
-url = 'https://weather.com/weather/hourbyhour/l/USCA0982:1:US'
-#San Diego airport https://weather.com/weather/hourbyhour/l/SAN:9:US
+url = 'https://weather.com/weather/hourbyhour/l/USCA0461:1:US'
+#San Diego airport https://weather.com/weather/fhourbyhour/l/SAN:9:US
 #San Diego https://weather.com/weather/hourbyhour/l/USCA0982:1:US
 
 #Pulls the html of the page
@@ -45,41 +45,39 @@ weatherData = []
 firstDay = day_containers[0].text
 
 for index in range(0,len(time_containers)):
-    
+
     #Time and day
     time = time_containers[index].text
     day = day_containers[index].text
-    
+
     if(day!=firstDay):
         dayOffset = 1
     else:
         dayOffset = 0
-    
+
     valtime = datetime_object.strptime((day + time),  '%a%I:%M %p')
-    
+
     valtime = valtime.replace(datetime_object.year, datetime_object.month,  datetime_object.day+dayOffset)
-    
+
     description = description_containers[index].span.text
     temp = temp_containers[index].span.text
     precip = precip_containers[index].find_all('span')[2].text
     humidity = humidity_containers[index].span.span.text
     wind = wind_containers[index].span.text
-    
-    
+
     weatherData.append([datetime_object, valtime, description, temp, precip, humidity, wind])
 
 weatherData = np.array(weatherData)
 
 #----Saving the csv file----
 weatherDataFrame = pd.DataFrame(weatherData, columns=['reftime','valtime', 'description', 'temp', 'precip', 'humidity', 'wind'])
-file_name = os.getcwd() + '/the_weather_channel/the_weather_channel_' + formattedTime + '.csv'
-weatherDataFrame.to_csv(file_name, sep='\t', encoding='utf-8')
+file_name = '/home/thomasg/getForecast/the_weather_channel/the_weather_channel.csv'
+weatherDataFrame.to_csv(file_name, encoding='utf-8', mode = 'a', header = False)
 print('Saved to: ' + file_name)
 
 
-
 #------forecast.weather.gov------
-url = 'https://forecast.weather.gov/MapClick.php?lat=32.72&lon=-117.16&FcstType=digitalDWML'
+url = 'https://forecast.weather.gov/MapClick.php?lat=36.3272&lon=-119.6458&FcstType=digitalDWML'
 
 #Pulls the html of the page
 response = get(url)
@@ -106,7 +104,7 @@ for index in range(0,len(time_containers)):
     wind_speed = wind_speed_containers[index].text
     humidity = humidity_containers[index].text
     probability_of_precipitation = int(probability_of_precipitation_containers[index].text)
-    
+
     weatherData.append([datetime_object, time,temperature,cloud_amount,wind_speed,humidity,probability_of_precipitation])
 
 weatherData = np.array(weatherData)
@@ -114,6 +112,10 @@ weatherData = np.array(weatherData)
 
 #----Saving the csv file----
 weatherDataFrame = pd.DataFrame(weatherData, columns=['reftime','time','temp', 'cloud-amount', 'wind-speed', 'humidity','probability_of_precipitation'])
-file_name = os.getcwd() + '/noaa/noaa_' + formattedTime + '.csv'
-weatherDataFrame.to_csv(file_name, sep='\t', encoding='utf-8')
+file_name = '/home/thomasg/getForecast/noaa/noaa.csv'
+weatherDataFrame.to_csv(file_name, encoding='utf-8', mode = 'a', header = False)
 print('Saved to: ' + file_name)
+
+print('Finished')
+
+r = get("https://maker.ifttt.com/trigger/test_event/with/key/cxq1vMIaL4dqv14BLCa1Yl")
