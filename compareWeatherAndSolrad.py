@@ -139,7 +139,7 @@ for i in range(0,len(csv_array)-1):
 ordered_hourly = np.array(ordered_hourly)
 
 #hours
-predicted_lookahead = 10
+predicted_lookahead = 1
 
 noaa_data_array = []
 for hours in ordered_hourly:
@@ -221,9 +221,9 @@ cs = hnxloc.get_clearsky(times + timedelta(hours=0), model='ineichen', linke_tur
 #Test machine learning
 X = []
 y = []
-for index in range(0, len(noaa_data_array)-1):
+for index in range(1, len(noaa_data_array)-1):
     #print(cs['dhi'][index] != 0)
-    X.append([noaa_data_array[index][1], noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dhi'][index]])
+    X.append([noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dhi'][index]])
     y.append(hourlySolradData[index][1])
 
     # if(cs['dhi'][index] != 0):
@@ -244,20 +244,26 @@ print("Test")
 
 from sklearn.neural_network import MLPRegressor
 
-model = MLPRegressor(max_iter = 2000, verbose = True, hidden_layer_sizes=(5), solver = 'adam')
+model = MLPRegressor(max_iter = 1000, verbose = True, hidden_layer_sizes=(100), solver = 'adam')
 
 model.fit(X_train, y_train)
 
 #plt.scatter(y_train, model.predict(X_train), label = 'Direct')
 #plt.show()
 
-plt.plot(times, hourlySolradData[:,1], label = 'Direct')
+
+
+plt.plot(times, hourlySolradData[:,1], label = 'Actual')
 
 predictInputs = []
-for index in range(0, len(noaa_data_array)):
-    predictInputs.append([noaa_data_array[index][1], noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dhi'][index]])
+for index in range(1, len(noaa_data_array)):
+    predictInputs.append([noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dhi'][index]])
 
-plt.plot(times, (model.predict(predictInputs)), label = 'Predicted')
+plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100)*10, label = 'Predicted using just cloud %')
+
+times = times.delete(0)
+
+plt.plot(times, (model.predict(predictInputs)), label = 'Predicted using MLPRegressor')
 
 #plt.plot(times, cs['dhi']*(model.predict(predictInputs)), label = 'Predicted')
 plt.legend(loc = 'upper left')
