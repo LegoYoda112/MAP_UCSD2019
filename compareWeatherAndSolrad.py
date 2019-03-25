@@ -7,7 +7,7 @@ from datetime import timedelta
 import pvlib as pv
 import math
 
-#SOLRAD -----------------
+#SOLRAD READER -----------------
 def readSolradDataFile (filename):
     print 'Reading ' + filename
 
@@ -69,26 +69,11 @@ def readSolradRange(startDay, endDay):
         outputData = np.append(outputData, readSolradDataFile(filename), axis = 0)
     return outputData
 
-# solradData = np.array(readSolradDataFile('solrad_data\\hnx19061.dat'))
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19062.dat'),axis = 0)
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19063.dat'),axis = 0)
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19064.dat'),axis = 0)
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19065.dat'),axis = 0)
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19066.dat'),axis = 0)
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19067.dat'),axis = 0)
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19068.dat'),axis = 0)
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19069.dat'),axis = 0)
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19070.dat'),axis = 0)
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19071.dat'),axis = 0)
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19072.dat'),axis = 0)
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19073.dat'),axis = 0)
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19074.dat'),axis = 0)
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19075.dat'),axis = 0)
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19076.dat'),axis = 0)
-# solradData = np.append(solradData, readSolradDataFile('solrad_data\\hnx19077.dat'),axis = 0)
-
+#Read the solrad data
 solradData = readSolradRange(19059,19077)
 
+
+#Convert the solrad data into houly averages.
 hourlySolradData = []
 
 for i in range(0, len(solradData)/60):
@@ -114,7 +99,7 @@ for i in range(0, len(solradData)/60):
 
 hourlySolradData = np.array(hourlySolradData)
 
-#NOAA ---------------------
+#NOAA READER ---------------------
 csv_array = pd.read_csv('noaa\\noaa.csv').as_matrix()
 
 ordered_hourly = []
@@ -138,7 +123,7 @@ for i in range(0,len(csv_array)-1):
 
 ordered_hourly = np.array(ordered_hourly)
 
-#hours
+#Number of ours to look ahead in our data.
 predicted_lookahead = 1
 
 noaa_data_array = []
@@ -149,11 +134,12 @@ for hours in ordered_hourly:
 noaa_data_array = np.array(noaa_data_array)
 
 
-#TRIMMING THE ARRAYS
+#LINING THE ARRAYS UP
+#We need to make sure each array (solrad and noaa) is the same length and each index corrisponds to the same entry
 startDate = datetime(2019,3,1,23,59)
 endDate = datetime(2019,3,19)
 
-#Noaa data array
+#Trim the NOAA data
 trimmed_noaa_data_array = []
 
 for item in noaa_data_array:
@@ -161,7 +147,7 @@ for item in noaa_data_array:
         trimmed_noaa_data_array.append(item)
 noaa_data_array = trimmed_noaa_data_array
 
-#Solrad data
+#Trip the Solrad data
 trimmed_solrad_data_array = []
 
 for item in hourlySolradData:
@@ -170,7 +156,7 @@ for item in hourlySolradData:
 
 hourlySolradData = np.array(trimmed_solrad_data_array)
 
-#Fixing gaps in the noaa data
+#Our downloaded noaa data has gaps, so we copy the previous values until we get another good data point
 for index in range(0, len(hourlySolradData)):
     #print(hourlySolradData[index][0] == noaa_data_array[index][0])
     if(hourlySolradData[index][0] != noaa_data_array[index][0]):
@@ -179,13 +165,16 @@ for index in range(0, len(hourlySolradData)):
 
 noaa_data_array = np.array(noaa_data_array)
 
-#CLEAR SKY ------------------
+
+#CALCULATING CLEAR SKY ------------------
+
 # sets the location: latitude, longitude, and time zone
 hnxloc = pv.location.Location(36.31357, -119.63164, 'US/Pacific')
-#times = pd.DatetimeIndex(start='2019-02-27', end='2019-03-13', freq='60min')
+
+#We create a times array that corrisponds to each entry in our trimmed arrays
 times = pd.DatetimeIndex(hourlySolradData[:,0])
 
-# computes the clear sky model using a popular model
+#Computes the clear sky (theoretical max) for each entry in the times array
 cs = hnxloc.get_clearsky(times + timedelta(hours=0), model='ineichen', linke_turbidity=3)
 
 # #PLOTTING --------------------
@@ -218,7 +207,7 @@ cs = hnxloc.get_clearsky(times + timedelta(hours=0), model='ineichen', linke_tur
 # plt.show()
 
 
-#Test machine learning
+#Machine learning
 X = []
 y = []
 for index in range(1, len(noaa_data_array)-1):
@@ -226,6 +215,7 @@ for index in range(1, len(noaa_data_array)-1):
     X.append([noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dhi'][index]])
     y.append(hourlySolradData[index][1])
 
+    #If we use the output of the net as the ratio
     # if(cs['dhi'][index] != 0):
     #     X.append([noaa_data_array[index][2], noaa_data_array[index][4], noaa_data_array[index][5]])
     #     y.append((hourlySolradData[index][1]/(cs['dhi'][index])))
@@ -244,7 +234,7 @@ print("Test")
 
 from sklearn.neural_network import MLPRegressor
 
-model = MLPRegressor(max_iter = 1000, verbose = True, hidden_layer_sizes=(100), solver = 'adam')
+model = MLPRegressor(max_iter = 1000, verbose = True, hidden_layer_sizes=(100,10), solver = 'adam')
 
 model.fit(X_train, y_train)
 
@@ -256,15 +246,20 @@ model.fit(X_train, y_train)
 plt.plot(times, hourlySolradData[:,1], label = 'Actual')
 
 predictInputs = []
-for index in range(1, len(noaa_data_array)):
+for index in range(0, len(noaa_data_array)):
     predictInputs.append([noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dhi'][index]])
 
 #plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100)*10, label = 'Predicted using just cloud %')
-
-times = times.delete(0)
 
 plt.plot(times, (model.predict(predictInputs)), label = 'Predicted using MLPRegressor')
 
 #plt.plot(times, cs['dhi']*(model.predict(predictInputs)), label = 'Predicted')
 plt.legend(loc = 'upper left')
 plt.show()
+
+params = model.get_params()
+
+from joblib import dump
+
+dump(model, 'MLPRegressor_model.joblib')
+print('Model has been dumped')
