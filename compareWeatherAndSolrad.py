@@ -70,7 +70,7 @@ def readSolradRange(startDay, endDay):
     return outputData
 
 #Read the solrad data
-solradData = readSolradRange(19059,19077)
+solradData = readSolradRange(19059,19086)
 
 
 #Convert the solrad data into houly averages.
@@ -136,8 +136,8 @@ noaa_data_array = np.array(noaa_data_array)
 
 #LINING THE ARRAYS UP
 #We need to make sure each array (solrad and noaa) is the same length and each index corrisponds to the same entry
-startDate = datetime(2019,3,1,23,59)
-endDate = datetime(2019,3,19)
+startDate = datetime(2019,3,1,22)
+endDate = datetime(2019,3,27)
 
 #Trim the NOAA data
 trimmed_noaa_data_array = []
@@ -201,10 +201,10 @@ plt.xlabel('Time')
 plt.show()
 
 
-plt.scatter((100-noaa_data_array[:,5]), (hourlySolradData[:,1]/(cs['dhi']*10))*100)
-plt.xlabel('Clouds - 1')
-plt.ylabel('Solrad/clearsky')
-plt.show()
+# plt.scatter((100-noaa_data_array[:,5]), (hourlySolradData[:,1]/(cs['dhi']*10))*100)
+# plt.xlabel('Clouds - 1')
+# plt.ylabel('Solrad/clearsky')
+# plt.show()
 
 
 #Machine learning
