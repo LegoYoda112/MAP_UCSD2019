@@ -3,18 +3,25 @@
 from joblib import load
 from bs4 import BeautifulSoup
 from requests import get
-import datetime
+from datetime import datetime
+from datetime import timedelta
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import pvlib as pv
+
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
 
 print('Enter the location of the area you want to predict the solar power for')
 
-lat = raw_input('Latitude:')
-lon = raw_input('Longitude:')
+lat = input('Latitude: ')
+lon = input('Longitude: ')
 
+print('Downloading...')
 
 #Gets the current date
-datetime_object = datetime.datetime.now()
-
+datetime_object = datetime.now()
 
 #------forecast.weather.gov------
 url = 'https://forecast.weather.gov/MapClick.php?lat='+lat+'&lon='+lon+'&FcstType=digitalDWML'
@@ -31,8 +38,6 @@ area_description = xml_soup.data.location.find('area-description')
 if area_description is None:
     area_description = xml_soup.data.location.find('description')
 
-print('Gathering weather data from: ' + area_description.text)
-
 #Weather data
 time_containers = xml_soup.data.findAll('start-valid-time')
 temperature_containers = xml_soup.data.parameters.findAll('temperature')[2].findAll('value')
@@ -45,14 +50,59 @@ probability_of_precipitation_containers = xml_soup.data.parameters.findAll('prob
 weatherData = []
 for index in range(0,len(time_containers)):
     time = time_containers[index].text
-    temperature = temperature_containers[index].text
-    cloud_amount = cloud_amount_containers[index].text
-    wind_speed = wind_speed_containers[index].text
-    humidity = humidity_containers[index].text
+    timezoneOffset = int(time[-5:-3])
+    time = datetime.strptime(time[:-6], '%Y-%m-%dT%H:%M:%S') + timedelta(hours = timezoneOffset)
+    temperature = float(temperature_containers[index].text)
+    cloud_amount = float(cloud_amount_containers[index].text)
+    wind_speed = float(wind_speed_containers[index].text)
+    humidity = float(humidity_containers[index].text)
     probability_of_precipitation = probability_of_precipitation_containers[index].text
+
+    if probability_of_precipitation == '':
+        probability_of_precipitation = 0
+
+    probability_of_precipitation = float(probability_of_precipitation)
 
     weatherData.append([datetime_object, time,temperature,cloud_amount,wind_speed,humidity,probability_of_precipitation])
 
 weatherData = np.array(weatherData)
 
-print(weatherData)
+print('Gathered weather data for: ' + area_description.text)
+
+print('Calculating the clear sky value')
+
+# sets the location: latitude, longitude, and time zone
+hnxloc = pv.location.Location(float(lat), float(lon))
+
+#We create a times array that corrisponds to each entry--
+times = pd.DatetimeIndex(weatherData[:,1])
+
+#Computes the clear sky (theoretical max) for each entry in the times array
+cs = hnxloc.get_clearsky(times, model='ineichen', linke_turbidity=3)
+#
+# plt.plot(weatherData[:,1],weatherData[:,3], label = 'cloud-amount')
+# plt.plot(times, cs['dhi'], label = 'Clear sky')
+# plt.legend(loc = 'upper left')
+# plt.xlabel('Time')
+# plt.show()
+
+predictInputs = []
+
+for index in range(0, len(weatherData)):
+    predictInputs.append([weatherData[index][3], weatherData[index][4], weatherData[index][5], weatherData[index][6], cs['dhi'][index]])
+
+#Reload the model
+modelReloaded = load('MLPRegressor_model.joblib')
+print('Model loaded')
+
+plt.plot(times, (modelReloaded.predict(predictInputs)), label = 'Predicted using MLPRegressor and reloaded')
+plt.plot(times, cs['dhi']*(1-weatherData[:,3]/100)*10, label = 'Predicted')
+
+#plt.plot(times, cs['dhi']*(model.predict(predictInputs)), label = 'Predicted')
+plt.legend(loc = 'upper right')
+plt.title('Solar power predictions for' + area_description.text)
+plt.ylabel('Watts m^-2')
+plt.xlabel('Time')
+plt.show()
+
+sns.relplot(times,cs['dhi']*(1-weatherData[:,3]/100)*10, )

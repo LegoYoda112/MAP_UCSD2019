@@ -9,7 +9,7 @@ import math
 
 #SOLRAD READER -----------------
 def readSolradDataFile (filename):
-    print 'Reading ' + filename
+    print('Reading ' + filename)
 
     #Opens the file
     file = open(filename, 'r')
@@ -76,7 +76,7 @@ solradData = readSolradRange(19059,19077)
 #Convert the solrad data into houly averages.
 hourlySolradData = []
 
-for i in range(0, len(solradData)/60):
+for i in range(0, int(len(solradData)/60)):
     hourOfSolradData = []
     timeStamp = solradData[(i*60)][22]
     for j in range(0, 59):
@@ -177,34 +177,34 @@ times = pd.DatetimeIndex(hourlySolradData[:,0])
 #Computes the clear sky (theoretical max) for each entry in the times array
 cs = hnxloc.get_clearsky(times + timedelta(hours=0), model='ineichen', linke_turbidity=3)
 
-# #PLOTTING --------------------
-# #plt.plot(times, hourlySolradData[:,1], label = 'Direct')
-# #plt.plot(times, hourlySolradData[:,2], label = 'Diffuse')
-#
-# #plt.plot(times, cs['dhi']*10, label = 'Clear sky')
-#
-# plt.plot(times, (hourlySolradData[:,1]/(cs['dhi']*10))*100, label = 'Ratio')
-#
-# #plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100)*10, label = 'Predicted')
-# plt.plot(times, (100-noaa_data_array[:,2]), label = 'Clouds')
-#
-# #plt.plot(noaa_data_array[:,0],noaa_data_array[:,1]*10, label = 'temp')
-# #plt.plot(noaa_data_array[:,0],noaa_data_array[:,2], label = 'cloud-amount')
-# #plt.plot(noaa_data_array[:,0],noaa_data_array[:,3]*3, label = 'wind-speed')
-# #plt.plot(noaa_data_array[:,0],noaa_data_array[:,4]*3, label = 'humidity')
-# #plt.plot(noaa_data_array[:,0],noaa_data_array[:,5]*3, label = 'probability_of_precipitation')
-#
-#
-# plt.legend(loc = 'upper left')
-# plt.ylabel('Watts m^-2')
-# plt.xlabel('Time')
-# plt.show()
+#PLOTTING --------------------
+plt.plot(times, hourlySolradData[:,1], label = 'Direct')
+plt.plot(times, hourlySolradData[:,2], label = 'Diffuse')
+
+plt.plot(times, cs['dhi'], label = 'Clear sky')
+
+#plt.plot(times, (hourlySolradData[:,1]/(cs['dhi']*10))*100, label = 'Ratio')
+
+#plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100)*10, label = 'Predicted')
+plt.plot(times, (100-noaa_data_array[:,2]), label = 'Clouds')
+
+#plt.plot(noaa_data_array[:,0],noaa_data_array[:,1], label = 'temp')
+#plt.plot(noaa_data_array[:,0],noaa_data_array[:,2], label = 'cloud-amount')
+#plt.plot(noaa_data_array[:,0],noaa_data_array[:,3], label = 'wind-speed')
+#plt.plot(noaa_data_array[:,0],noaa_data_array[:,4], label = 'humidity')
+#plt.plot(noaa_data_array[:,0],noaa_data_array[:,5], label = 'probability_of_precipitation')
 
 
-# plt.scatter((100-noaa_data_array[:,5]), (hourlySolradData[:,1]/(cs['dhi']*10))*100)
-# plt.xlabel('Clouds - 1')
-# plt.ylabel('Solrad/clearsky')
-# plt.show()
+plt.legend(loc = 'upper left')
+plt.ylabel('Watts m^-2')
+plt.xlabel('Time')
+plt.show()
+
+
+plt.scatter((100-noaa_data_array[:,5]), (hourlySolradData[:,1]/(cs['dhi']*10))*100)
+plt.xlabel('Clouds - 1')
+plt.ylabel('Solrad/clearsky')
+plt.show()
 
 
 #Machine learning
@@ -249,7 +249,7 @@ predictInputs = []
 for index in range(0, len(noaa_data_array)):
     predictInputs.append([noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dhi'][index]])
 
-#plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100)*10, label = 'Predicted using just cloud %')
+plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100)*10, label = 'Predicted using just cloud %')
 
 plt.plot(times, (model.predict(predictInputs)), label = 'Predicted using MLPRegressor')
 

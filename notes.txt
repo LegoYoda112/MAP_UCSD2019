@@ -1,0 +1,16 @@
+Use zenith angle for pvlib
+
+transfer learning
+
+ensembling
+change weights based on conditions
+
+Run, save and display predefined results.
+
+__init__
+
+pythonic way
+
+jupyterLab
+
+Try installing packages through command line on the server
