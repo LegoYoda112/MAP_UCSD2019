@@ -136,7 +136,7 @@ noaa_data_array = np.array(noaa_data_array)
 
 #LINING THE ARRAYS UP
 #We need to make sure each array (solrad and noaa) is the same length and each index corrisponds to the same entry
-startDate = datetime(2019,3,1,22)
+startDate = datetime(2019,2,28)
 endDate = datetime(2019,3,27)
 
 #Trim the NOAA data
@@ -212,7 +212,7 @@ X = []
 y = []
 for index in range(1, len(noaa_data_array)-1):
     #print(cs['dhi'][index] != 0)
-    X.append([noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dhi'][index]])
+    X.append([noaa_data_array[index][1],noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dhi'][index]])
     y.append(hourlySolradData[index][1])
 
     #If we use the output of the net as the ratio
@@ -222,7 +222,7 @@ for index in range(1, len(noaa_data_array)-1):
 
 from sklearn.model_selection import train_test_split
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
 
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
@@ -234,7 +234,7 @@ print("Test")
 
 from sklearn.neural_network import MLPRegressor
 
-model = MLPRegressor(max_iter = 1000, verbose = True, hidden_layer_sizes=(100,10), solver = 'adam')
+model = MLPRegressor(max_iter = 1000, verbose = True, hidden_layer_sizes=(500,100), solver = 'adam')
 
 model.fit(X_train, y_train)
 
@@ -243,17 +243,19 @@ model.fit(X_train, y_train)
 
 
 
-plt.plot(times, hourlySolradData[:,1], label = 'Actual')
+
 
 predictInputs = []
 for index in range(0, len(noaa_data_array)):
-    predictInputs.append([noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dhi'][index]])
+    predictInputs.append([noaa_data_array[index][1],noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dhi'][index]])
 
-plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100)*10, label = 'Predicted using just cloud %')
+#plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100)*10, label = 'Predicted using just cloud %')
 
-plt.plot(times, (model.predict(predictInputs)), label = 'Predicted using MLPRegressor')
+plt.plot(times, hourlySolradData[:,1], label = 'Actual')
+plt.plot(times, (model.predict(predictInputs)), label = 'Predicted using MLPRegressor', linestyle='dashed', linewidth=1.5)
 
 #plt.plot(times, cs['dhi']*(model.predict(predictInputs)), label = 'Predicted')
+
 plt.legend(loc = 'upper left')
 plt.show()
 

@@ -15,8 +15,8 @@ register_matplotlib_converters()
 
 print('Enter the location of the area you want to predict the solar power for')
 
-lat = input('Latitude: ')
-lon = input('Longitude: ')
+lat = input()
+lon = input()
 
 print('Downloading...')
 
@@ -52,6 +52,7 @@ for index in range(0,len(time_containers)):
     time = time_containers[index].text
     timezoneOffset = int(time[-5:-3])
     time = datetime.strptime(time[:-6], '%Y-%m-%dT%H:%M:%S') + timedelta(hours = timezoneOffset)
+    print(temperature_containers[index].text)
     temperature = float(temperature_containers[index].text)
     cloud_amount = float(cloud_amount_containers[index].text)
     wind_speed = float(wind_speed_containers[index].text)
@@ -89,7 +90,10 @@ cs = hnxloc.get_clearsky(times, model='ineichen', linke_turbidity=3)
 predictInputs = []
 
 for index in range(0, len(weatherData)):
-    predictInputs.append([weatherData[index][3], weatherData[index][4], weatherData[index][5], weatherData[index][6], cs['dhi'][index]])
+    predictInputs.append([weatherData[index][2],weatherData[index][3], weatherData[index][4], weatherData[index][5], weatherData[index][6], cs['dhi'][index]])
+
+
+plt.style.use('seaborn-darkgrid')
 
 #Reload the model
 modelReloaded = load('MLPRegressor_model.joblib')
@@ -103,6 +107,7 @@ plt.legend(loc = 'upper right')
 plt.title('Solar power predictions for' + area_description.text)
 plt.ylabel('Watts m^-2')
 plt.xlabel('Time')
+plt.tight_layout(pad = 0)
 plt.show()
 
 sns.relplot(times,cs['dhi']*(1-weatherData[:,3]/100)*10, )
