@@ -15,8 +15,8 @@ register_matplotlib_converters()
 
 print('Enter the location of the area you want to predict the solar power for')
 
-lat = input()
-lon = input()
+lat = '32.9483'
+lon = '-117.12299'
 
 print('Downloading...')
 
@@ -46,23 +46,26 @@ wind_speed_containers = xml_soup.data.parameters.findAll('wind-speed')[0].findAl
 humidity_containers = xml_soup.data.parameters.findAll('humidity')[0].findAll('value')
 probability_of_precipitation_containers = xml_soup.data.parameters.findAll('probability-of-precipitation')[0].findAll('value')
 
+def safeConvert (number):
+    if number == '':
+        number = 0
+    if number == ' ':
+        number = 0
+    number = float(number)
+    return number
+
 #------Getting content from the containers-----
 weatherData = []
 for index in range(0,len(time_containers)):
     time = time_containers[index].text
     timezoneOffset = int(time[-5:-3])
     time = datetime.strptime(time[:-6], '%Y-%m-%dT%H:%M:%S') + timedelta(hours = timezoneOffset)
-    print(temperature_containers[index].text)
-    temperature = float(temperature_containers[index].text)
-    cloud_amount = float(cloud_amount_containers[index].text)
-    wind_speed = float(wind_speed_containers[index].text)
-    humidity = float(humidity_containers[index].text)
-    probability_of_precipitation = probability_of_precipitation_containers[index].text
 
-    if probability_of_precipitation == '':
-        probability_of_precipitation = 0
-
-    probability_of_precipitation = float(probability_of_precipitation)
+    temperature = safeConvert(temperature_containers[index].text)
+    cloud_amount = safeConvert(cloud_amount_containers[index].text)
+    wind_speed = safeConvert(wind_speed_containers[index].text)
+    humidity = safeConvert(humidity_containers[index].text)
+    probability_of_precipitation = safeConvert(probability_of_precipitation_containers[index].text)
 
     weatherData.append([datetime_object, time,temperature,cloud_amount,wind_speed,humidity,probability_of_precipitation])
 
@@ -109,5 +112,3 @@ plt.ylabel('Watts m^-2')
 plt.xlabel('Time')
 plt.tight_layout(pad = 0)
 plt.show()
-
-sns.relplot(times,cs['dhi']*(1-weatherData[:,3]/100)*10, )
