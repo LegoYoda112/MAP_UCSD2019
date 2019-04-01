@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="./papaparse.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function loadFile(filePath) {
+        var result = null;
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", filePath, false);
+        xmlhttp.send();
+        if (xmlhttp.status==200) {
+          result = xmlhttp.responseText;
+        }
+        return result;
+      }
+
+      csvData = Papa.parse(loadFile('predicted.csv'));
+      csvData = csvData.data;
+
+      for(var i = 1; i < csvData.length; i++){
+        csvData[i][0] = parseFloat(csvData[i][0]);
+        csvData[i][1] = parseFloat(csvData[i][1]);
+      }
+
+      function drawChart() {
+
+        var data = google.visualization.arrayToDataTable(csvData);
+
+        var options = {
+          title: 'San Diego CA',
+          legend: { position: 'bottom' },
+          chartArea: {'width': '85%', 'height': '80%'},
+          vAxis: {title: 'Watts'},
+          hAxis: {title: 'Time'}
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+
+    <style>
+      .responsiveImage {
+        max-width: 90%;
+        height: auto;
+      }
+
+      .mainChart{
+          width: 90%;
+          height: 500px;
+      }
+
+      .normalParagraph{
+        font-family: "Roboto", sans-serif;
+        font-size: 1.1em;
+        text-decoration: none;
+        background: grey;
+        padding: 10px;
+        margin: 10px;
+      }
+      .flexBox{
+        display: flex;
+        flex-direction: column;
+        max-width: 1200px;
+        margin: auto;
+      }
+    </style>
+
+      <title>San Diego</title>
+      <link href="https://fonts.googleapis.com/css?family=Press+Start+2P|Rajdhani|Roboto+Mono:500i" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class= "flexBox">
+      <p class = 'normalParagraph'> Solar power prediction for San Diego using a MLPRegression model trained on data from Hanford CA. To learn more about how it works, check out the link below.</p>
+      <img src="sanDiegoForecast.png" alt="Forecast for San Diego" class = "responsiveImage">
+      <div id="curve_chart" class = "mainChart"></div>
+    </div>
+  </body>
+</html>

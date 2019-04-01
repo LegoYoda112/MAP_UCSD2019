@@ -7,16 +7,19 @@ from datetime import datetime
 from datetime import timedelta
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import pvlib as pv
+import matplotlib.pyplot as plt
+
+from matplotlib.pyplot import figure
+figure(num=None, figsize=(15, 6), dpi=100)
 
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 
 print('Enter the location of the area you want to predict the solar power for')
 
-lat = input()
-lon = input()
+lat = '32.9483'
+lon = '-117.12299'
 
 print('Downloading...')
 
@@ -52,7 +55,6 @@ for index in range(0,len(time_containers)):
     time = time_containers[index].text
     timezoneOffset = int(time[-5:-3])
     time = datetime.strptime(time[:-6], '%Y-%m-%dT%H:%M:%S') + timedelta(hours = timezoneOffset)
-    print(temperature_containers[index].text)
     temperature = float(temperature_containers[index].text)
     cloud_amount = float(cloud_amount_containers[index].text)
     wind_speed = float(wind_speed_containers[index].text)
@@ -92,22 +94,32 @@ predictInputs = []
 for index in range(0, len(weatherData)):
     predictInputs.append([weatherData[index][2],weatherData[index][3], weatherData[index][4], weatherData[index][5], weatherData[index][6], cs['dhi'][index]])
 
-
-plt.style.use('seaborn-darkgrid')
-
-#Reload the model
+#Reload the model CHANGE THE FILE NAMES BEFORE UPLOADING
 modelReloaded = load('MLPRegressor_model.joblib')
 print('Model loaded')
 
-plt.plot(times, (modelReloaded.predict(predictInputs)), label = 'Predicted using MLPRegressor and reloaded')
-plt.plot(times, cs['dhi']*(1-weatherData[:,3]/100)*10, label = 'Predicted')
+MLP_predicted = modelReloaded.predict(predictInputs)
 
-#plt.plot(times, cs['dhi']*(model.predict(predictInputs)), label = 'Predicted')
+for index in range(0, len(MLP_predicted)):
+    if(MLP_predicted[index] < 50):
+        MLP_predicted[index] = 0
+
+file_name = 'forecastPage/predicted.csv'
+
+predictedDF = pd.DataFrame(MLP_predicted, columns = ["Solar power"])
+predictedDF.to_csv(file_name, sep='\t', encoding='utf-8', )
+
+plt.style.use('seaborn-darkgrid')
+
+plt.plot(times, MLP_predicted, label = 'Predicted using MLPRegressor')
+plt.plot(times, cs['dhi']*(1-weatherData[:,3]/100)*10, label = 'Predicted using just cloudy %')
+#
+# #plt.plot(times, cs['dhi']*(model.predict(predictInputs)), label = 'Predicted')
 plt.legend(loc = 'upper right')
-plt.title('Solar power predictions for' + area_description.text)
+plt.title('Solar power predictions for ' + area_description.text)
 plt.ylabel('Watts m^-2')
 plt.xlabel('Time')
-plt.tight_layout(pad = 0)
-plt.show()
+plt.tight_layout(pad = 1)
 
-sns.relplot(times,cs['dhi']*(1-weatherData[:,3]/100)*10, )
+# CHANGE THE FILE NAMES BEFORE UPLOADING
+plt.savefig('forecastPage/sanDiegoForecast.png')
