@@ -75,7 +75,6 @@ file_name = '/home/thomasg/getForecast/the_weather_channel/the_weather_channel.c
 weatherDataFrame.to_csv(file_name, encoding='utf-8', mode = 'a', header = False)
 print('Saved to: ' + file_name)
 
-
 #------forecast.weather.gov------
 url = 'https://forecast.weather.gov/MapClick.php?lat=36.3272&lon=-119.6458&FcstType=digitalDWML'
 
