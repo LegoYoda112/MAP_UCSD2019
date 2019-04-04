@@ -14,8 +14,8 @@ except ftplib.all_errors as e:
     errorcode_string = str(e).split(None, 1)[0]
 
 #Setting the current working directory to 2019
-#ftp.cwd('/data/radiation/solrad/hnx/2019/')
-ftp.cwd('/data/radiation/solrad/realtime/hnx/')
+ftp.cwd('/data/radiation/solrad/hnx/2019/')
+#ftp.cwd('/data/radiation/solrad/realtime/hnx/')
 
 directoryName = 'solrad_data'
 if not os.path.exists(directoryName):
@@ -25,8 +25,8 @@ if not os.path.exists(directoryName):
 directoryPath = '%s/%s' % (os.getcwd(), directoryName)
 os.chdir(directoryPath)
 
-dateStart = 19078;
-dateEnd = 19086;
+dateStart = 19090;
+dateEnd = 19093;
 
 currentDownloadDate = dateStart;
 
