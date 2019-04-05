@@ -7,6 +7,10 @@ from datetime import timedelta
 import pvlib as pv
 import math
 
+locationName = 'bis'
+
+directoryName = 'solrad_data/'+locationName + '/'
+
 #SOLRAD READER -----------------
 def readSolradDataFile (filename):
     print('Reading ' + filename)
@@ -62,16 +66,17 @@ def readSolradDataFile (filename):
 
     return ordered_file_contents
 
+filename = 'solrad_data/'+locationName + '/'
+
 def readSolradRange(startDay, endDay):
-    outputData = np.array(readSolradDataFile('solrad_data\\hnx' + str(startDay) + '.dat'))
+    outputData = np.array(readSolradDataFile('solrad_data/' + locationName + '/' + locationName + str(startDay) + '.dat'))
     for day in range((startDay+1), (endDay+1)):
-        filename = 'solrad_data\\hnx' + str(day) + '.dat'
+        filename = 'solrad_data/' + locationName + '/' + locationName + str(day) + '.dat'
         outputData = np.append(outputData, readSolradDataFile(filename), axis = 0)
     return outputData
 
 #Read the solrad data
-solradData = readSolradRange(19059,19086)
-
+solradData = readSolradRange(19088,19093)
 
 #Convert the solrad data into houly averages.
 hourlySolradData = []
@@ -100,7 +105,9 @@ for i in range(0, int(len(solradData)/60)):
 hourlySolradData = np.array(hourlySolradData)
 
 #NOAA READER ---------------------
-csv_array = pd.read_csv('noaa\\noaa.csv').as_matrix()
+csv_array = pd.read_csv('noaa\\noaa-' + locationName + '.csv').as_matrix()
+
+
 
 ordered_hourly = []
 hourly_forecast = []
@@ -115,8 +122,12 @@ for i in range(0,len(csv_array)-1):
         ordered_hourly.append(np.array(hourly_forecast))
         hourly_forecast = []
 
+    time = csv_array[i][2]
+    timezoneOffset = int(time[-5:-3])
+    time = datetime.strptime(time[:-6], '%Y-%m-%dT%H:%M:%S') + timedelta(hours = timezoneOffset)
+
     hour_forecast = csv_array[i]
-    hour_forecast = np.append(hour_forecast, datetime.strptime(csv_array[i][2][:-6], '%Y-%m-%dT%H:%M:%S') + timedelta(hours=7) )
+    hour_forecast = np.append(hour_forecast, time)
 
     hourly_forecast.append(hour_forecast)
 
@@ -124,7 +135,7 @@ for i in range(0,len(csv_array)-1):
 ordered_hourly = np.array(ordered_hourly)
 
 #Number of ours to look ahead in our data.
-predicted_lookahead = 1
+predicted_lookahead = 0
 
 noaa_data_array = []
 for hours in ordered_hourly:
@@ -133,11 +144,10 @@ for hours in ordered_hourly:
     noaa_data_array.append([timeStamp, float(hours[predicted_lookahead][3]), float(hours[predicted_lookahead][4]), float(hours[predicted_lookahead][5]), float(hours[predicted_lookahead][6]), float(hours[predicted_lookahead][7])])
 noaa_data_array = np.array(noaa_data_array)
 
-
 #LINING THE ARRAYS UP
 #We need to make sure each array (solrad and noaa) is the same length and each index corrisponds to the same entry
-startDate = datetime(2019,2,28)
-endDate = datetime(2019,3,27)
+startDate = datetime(2019,4,1,21)
+endDate = datetime(2019,4,4)
 
 #Trim the NOAA data
 trimmed_noaa_data_array = []
@@ -165,35 +175,34 @@ for index in range(0, len(hourlySolradData)):
 
 noaa_data_array = np.array(noaa_data_array)
 
-
 #CALCULATING CLEAR SKY ------------------
 
 # sets the location: latitude, longitude, and time zone
-hnxloc = pv.location.Location(36.31357, -119.63164, 'US/Pacific')
+hnxloc = pv.location.Location(46.77179, -100.75955)
 
 #We create a times array that corrisponds to each entry in our trimmed arrays
 times = pd.DatetimeIndex(hourlySolradData[:,0])
 
 #Computes the clear sky (theoretical max) for each entry in the times array
-cs = hnxloc.get_clearsky(times + timedelta(hours=0), model='ineichen', linke_turbidity=3)
+cs = hnxloc.get_clearsky(times, model='ineichen', linke_turbidity=3)
 
 #PLOTTING --------------------
 plt.plot(times, hourlySolradData[:,1], label = 'Direct')
 plt.plot(times, hourlySolradData[:,2], label = 'Diffuse')
 
-plt.plot(times, cs['dhi'], label = 'Clear sky')
+plt.plot(times, cs['dhi']*10, label = 'Clear sky')
 
 #plt.plot(times, (hourlySolradData[:,1]/(cs['dhi']*10))*100, label = 'Ratio')
 
 #plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100)*10, label = 'Predicted')
-plt.plot(times, (100-noaa_data_array[:,2]), label = 'Clouds')
-
-#plt.plot(noaa_data_array[:,0],noaa_data_array[:,1], label = 'temp')
+#plt.plot(times, (100-noaa_data_array[:,2]), label = 'Clouds')
+#
+plt.plot(times,noaa_data_array[:,1]*3, label = 'temp')
 #plt.plot(noaa_data_array[:,0],noaa_data_array[:,2], label = 'cloud-amount')
 #plt.plot(noaa_data_array[:,0],noaa_data_array[:,3], label = 'wind-speed')
 #plt.plot(noaa_data_array[:,0],noaa_data_array[:,4], label = 'humidity')
 #plt.plot(noaa_data_array[:,0],noaa_data_array[:,5], label = 'probability_of_precipitation')
-
+#
 
 plt.legend(loc = 'upper left')
 plt.ylabel('Watts m^-2')
@@ -240,10 +249,6 @@ model.fit(X_train, y_train)
 
 #plt.scatter(y_train, model.predict(X_train), label = 'Direct')
 #plt.show()
-
-
-
-
 
 predictInputs = []
 for index in range(0, len(noaa_data_array)):

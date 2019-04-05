@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from datetime import timedelta
 
-csv_array = pd.read_csv('noaa\\noaa.csv').as_matrix()
+csv_array = pd.read_csv('noaa\\noaa-ORT.csv').as_matrix()
 
 ordered_hourly = []
 hourly_forecast = []
@@ -20,7 +20,7 @@ for i in range(0,len(csv_array)-1):
         hourly_forecast = []
 
     hour_forecast = csv_array[i]
-    hour_forecast = np.append(hour_forecast, datetime.strptime(csv_array[i][2][:-6], '%Y-%m-%dT%H:%M:%S')) 
+    hour_forecast = np.append(hour_forecast, datetime.strptime(csv_array[i][2][:-6], '%Y-%m-%dT%H:%M:%S'))
 
     hourly_forecast.append(hour_forecast)
 
@@ -31,7 +31,7 @@ print(ordered_hourly[0][0][3])
 
 cloudy_array = []
 for hours in ordered_hourly:
-    cloudPercentage = float(hours[0][4])
+    cloudPercentage = float(hours[0][5])
     timeStamp = hours[0][8]
 
     cloudy_array.append([timeStamp, cloudPercentage])

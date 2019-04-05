@@ -6,6 +6,8 @@ import ftplib
 
 print('Connecting to server...')
 
+locationName = 'bis'
+
 try:
     ftp = ftplib.FTP('aftp.cmdl.noaa.gov')
     ftp.login()
@@ -14,10 +16,10 @@ except ftplib.all_errors as e:
     errorcode_string = str(e).split(None, 1)[0]
 
 #Setting the current working directory to 2019
-ftp.cwd('/data/radiation/solrad/hnx/2019/')
-#ftp.cwd('/data/radiation/solrad/realtime/hnx/')
+ftp.cwd('/data/radiation/solrad/' + locationName + '/2019/')
+#ftp.cwd('/data/radiation/solrad/realtime/' + locationName)
 
-directoryName = 'solrad_data'
+directoryName = 'solrad_data/' + locationName + '/'
 if not os.path.exists(directoryName):
     os.makedirs(directoryName)
 
@@ -25,8 +27,8 @@ if not os.path.exists(directoryName):
 directoryPath = '%s/%s' % (os.getcwd(), directoryName)
 os.chdir(directoryPath)
 
-dateStart = 19090;
-dateEnd = 19093;
+dateStart = 19088
+dateEnd = 19095;
 
 currentDownloadDate = dateStart;
 
@@ -34,7 +36,7 @@ print( ftp.nlst())
 
 while currentDownloadDate <= dateEnd:
 
-    tempFileName = 'hnx%s.dat' % currentDownloadDate
+    tempFileName = locationName + '%s.dat' % currentDownloadDate
     file = open(tempFileName, 'wb')
 
     print('Downloading %s' % tempFileName)
