@@ -6,7 +6,7 @@ import ftplib
 
 print('Connecting to server...')
 
-locationName = 'bis'
+locationName = 'slc'
 
 try:
     ftp = ftplib.FTP('aftp.cmdl.noaa.gov')
@@ -27,8 +27,8 @@ if not os.path.exists(directoryName):
 directoryPath = '%s/%s' % (os.getcwd(), directoryName)
 os.chdir(directoryPath)
 
-dateStart = 19088
-dateEnd = 19095;
+dateStart = 19090
+dateEnd = 19094
 
 currentDownloadDate = dateStart;
 

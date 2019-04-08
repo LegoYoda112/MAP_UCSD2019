@@ -7,9 +7,10 @@ from datetime import timedelta
 import pvlib as pv
 import math
 
-locationName = 'bis'
+locationName = 'slc'
+#TODO: Figure out why slc isn't working
 
-directoryName = 'solrad_data/'+locationName + '/'
+directoryName = 'solrad_data/' + locationName + '/'
 
 #SOLRAD READER -----------------
 def readSolradDataFile (filename):
@@ -76,7 +77,7 @@ def readSolradRange(startDay, endDay):
     return outputData
 
 #Read the solrad data
-solradData = readSolradRange(19088,19093)
+solradData = readSolradRange(19091,19094)
 
 #Convert the solrad data into houly averages.
 hourlySolradData = []
