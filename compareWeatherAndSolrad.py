@@ -7,7 +7,7 @@ from datetime import timedelta
 import pvlib as pv
 import math
 
-locationName = 'slc'
+locationName = 'hnx'
 #TODO: Figure out why slc isn't working
 
 directoryName = 'solrad_data/' + locationName + '/'
@@ -77,7 +77,7 @@ def readSolradRange(startDay, endDay):
     return outputData
 
 #Read the solrad data
-solradData = readSolradRange(19091,19094)
+solradData = readSolradRange(19060,19094)
 
 #Convert the solrad data into houly averages.
 hourlySolradData = []
@@ -147,7 +147,7 @@ noaa_data_array = np.array(noaa_data_array)
 
 #LINING THE ARRAYS UP
 #We need to make sure each array (solrad and noaa) is the same length and each index corrisponds to the same entry
-startDate = datetime(2019,4,1,21)
+startDate = datetime(2019,3,1)
 endDate = datetime(2019,4,4)
 
 #Trim the NOAA data

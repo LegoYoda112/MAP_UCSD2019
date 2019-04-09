@@ -6,7 +6,7 @@ import ftplib
 
 print('Connecting to server...')
 
-locationName = 'slc'
+locationName = 'hnx'
 
 try:
     ftp = ftplib.FTP('aftp.cmdl.noaa.gov')
