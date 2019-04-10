@@ -42,45 +42,34 @@
         var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
         chart.draw(data, options);
+
+        var percent = 60;
+        document.getElementById('largePercent').innerHTML = percent+"%";
+        document.getElementById('innerSunBar').style.width = percent+"%";
       }
     </script>
 
-    <style>
-      .responsiveImage {
-        max-width: 90%;
-        height: auto;
-      }
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
 
-      .mainChart{
-          width: 90%;
-          height: 500px;
-      }
-
-      .normalParagraph{
-        font-family: "Roboto", sans-serif;
-        font-size: 1.1em;
-        text-decoration: none;
-        background: grey;
-        padding: 10px;
-        margin: 10px;
-      }
-      .flexBox{
-        display: flex;
-        flex-direction: column;
-        max-width: 1200px;
-        margin: auto;
-      }
-    </style>
-
-      <title>San Diego</title>
-      <link href="https://fonts.googleapis.com/css?family=Press+Start+2P|Rajdhani|Roboto+Mono:500i" rel="stylesheet">
+    <title>San Diego</title>
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P|Rajdhani|Roboto|Russo+One" rel="stylesheet">
   </head>
 
   <body>
     <div class= "flexBox">
-      <p class = 'normalParagraph'> Solar power prediction for San Diego using a MLPRegression model trained on data from Hanford CA. To learn more about how it works, check out the link below.</p>
-      <img src="sanDiegoForecast.png" alt="Forecast for San Diego" class = "responsiveImage">
-      <div id="curve_chart" class = "mainChart"></div>
+      <div class = "fullWideGrey">
+        <div class = "middleBox">
+          <div class = "weatherbox1">
+            <div id = "largePercent">0%</div>
+            <div class = "whiteText">of clear sky today</div>
+            <div id = "sunBar"><div id = "innerSunBar"></div></div>
+          </div>
+          <p class = 'normalParagraph'> Solar power prediction for San Diego using a MLPRegression model trained on data from Hanford CA. To learn more about how it works, check out the link below.</p>
+        </div>
+      </div>
+      <div class = "fullWideYellow">
+        <div class = "middleBox"><div id="curve_chart" class = "mainChart"></div></div>
+      </div>
     </div>
   </body>
 </html>
