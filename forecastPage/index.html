@@ -28,16 +28,20 @@
         csvData[i][2] = parseFloat(csvData[i][2]);
       }
 
-      var clearskySum = 0;
       var predictedSum = 0;
+      var clearskySum = 0;
 
       for(var i = 1; i<24; i++){
-        clearskySum += csvData[i][1];
-        predictedSum += csvData[i][2];
+        predictedSum += csvData[i][1];
+        clearskySum += csvData[i][2];
       }
 
       var ratio = predictedSum/clearskySum;
       var percent = parseInt(ratio*100);
+
+      if(percent>100){
+        percent = 100;
+      }
 
       function drawChart() {
 
@@ -54,7 +58,6 @@
         var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
         chart.draw(data, options);
-
 
         document.getElementById('largePercent').innerHTML = percent+"%";
         document.getElementById('innerSunBar').style.width = percent+"%";
@@ -73,10 +76,10 @@
         <div class = "middleBox">
           <div class = "weatherbox1">
             <div id = "largePercent">0%</div>
-            <div class = "whiteText">of clear sky today</div>
+            <div class = "whiteText">in the next 24 hours</div>
             <div id = "sunBar"><div id = "innerSunBar"></div></div>
           </div>
-          <p class = 'normalParagraph'> Solar power prediction for San Diego using a MLPRegression model trained on data from Hanford CA. To learn more about how it works, check out the link below.</p>
+          <p class = 'normalParagraph'> Solar power prediction for San Diego using a MLPRegression model trained on data from Hanford CA. To learn more about how it works, check out the link below. (coming soon)</p>
         </div>
       </div>
       <div class = "fullWideYellow">
