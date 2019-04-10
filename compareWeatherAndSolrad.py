@@ -191,15 +191,15 @@ cs = hnxloc.get_clearsky(times, model='ineichen', linke_turbidity=3)
 plt.plot(times, hourlySolradData[:,1], label = 'Direct')
 plt.plot(times, hourlySolradData[:,2], label = 'Diffuse')
 
-plt.plot(times, cs['dni']*10, label = 'Clear sky')
+plt.plot(times, cs['dni'], label = 'Clear sky')
 
 #plt.plot(times, (hourlySolradData[:,1]/(cs['dhi']*10))*100, label = 'Ratio')
 
-#plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100)*10, label = 'Predicted')
+plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100), label = 'Predicted')
 #plt.plot(times, (100-noaa_data_array[:,2]), label = 'Clouds')
 #
-plt.plot(times,noaa_data_array[:,1]*3, label = 'temp')
-#plt.plot(noaa_data_array[:,0],noaa_data_array[:,2], label = 'cloud-amount')
+#plt.plot(times,noaa_data_array[:,1]*3, label = 'temp')
+plt.plot(noaa_data_array[:,0],noaa_data_array[:,2], label = 'cloud-amount')
 #plt.plot(noaa_data_array[:,0],noaa_data_array[:,3], label = 'wind-speed')
 #plt.plot(noaa_data_array[:,0],noaa_data_array[:,4], label = 'humidity')
 #plt.plot(noaa_data_array[:,0],noaa_data_array[:,5], label = 'probability_of_precipitation')
