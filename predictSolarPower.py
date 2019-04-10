@@ -49,22 +49,25 @@ wind_speed_containers = xml_soup.data.parameters.findAll('wind-speed')[0].findAl
 humidity_containers = xml_soup.data.parameters.findAll('humidity')[0].findAll('value')
 probability_of_precipitation_containers = xml_soup.data.parameters.findAll('probability-of-precipitation')[0].findAll('value')
 
+def safeConvert (number):
+    if number == '':
+        number = 0
+    if number == ' ':
+        number = 0
+    number = float(number)
+    return number
+
 #------Getting content from the containers-----
 weatherData = []
 for index in range(0,len(time_containers)):
     time = time_containers[index].text
     timezoneOffset = int(time[-5:-3])
     time = datetime.strptime(time[:-6], '%Y-%m-%dT%H:%M:%S') + timedelta(hours = timezoneOffset)
-    temperature = float(temperature_containers[index].text)
-    cloud_amount = float(cloud_amount_containers[index].text)
-    wind_speed = float(wind_speed_containers[index].text)
-    humidity = float(humidity_containers[index].text)
-    probability_of_precipitation = probability_of_precipitation_containers[index].text
-
-    if probability_of_precipitation == '':
-        probability_of_precipitation = 0
-
-    probability_of_precipitation = float(probability_of_precipitation)
+    temperature = safeConvert(temperature_containers[index].text)
+    cloud_amount = safeConvert(cloud_amount_containers[index].text)
+    wind_speed = safeConvert(wind_speed_containers[index].text)
+    humidity = safeConvert(humidity_containers[index].text)
+    probability_of_precipitation = safeConvert(probability_of_precipitation_containers[index].text)
 
     weatherData.append([datetime_object, time,temperature,cloud_amount,wind_speed,humidity,probability_of_precipitation])
 
@@ -100,13 +103,20 @@ print('Model loaded')
 
 MLP_predicted = modelReloaded.predict(predictInputs)
 
+fileOutput = []
+
 for index in range(0, len(MLP_predicted)):
     if(MLP_predicted[index] < 50):
         MLP_predicted[index] = 0
 
+    fileOutput.append([MLP_predicted[index], cs['dhi'][index]])
+
+
 file_name = 'forecastPage/predicted.csv'
 
-predictedDF = pd.DataFrame(MLP_predicted, columns = ["Solar power"])
+print(fileOutput)
+
+predictedDF = pd.DataFrame(fileOutput, columns = ["Solar power", "Clear sky"])
 predictedDF.to_csv(file_name, sep='\t', encoding='utf-8', )
 
 plt.style.use('seaborn-darkgrid')
