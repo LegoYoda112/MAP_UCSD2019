@@ -103,9 +103,9 @@ modelReloaded = load('MLPRegressor_model.joblib')
 print('Model loaded')
 
 plt.plot(times, (modelReloaded.predict(predictInputs)), label = 'Predicted using MLPRegressor and reloaded')
-plt.plot(times, cs['dhi']*(1-weatherData[:,3]/100)*10, label = 'Predicted')
+plt.plot(times, cs['dni']*(1-weatherData[:,3]/100)*10, label = 'Predicted')
 
-#plt.plot(times, cs['dhi']*(model.predict(predictInputs)), label = 'Predicted')
+#plt.plot(times, cs['dni']*(model.predict(predictInputs)), label = 'Predicted')
 plt.legend(loc = 'upper right')
 plt.title('Solar power predictions for' + area_description.text)
 plt.ylabel('Watts m^-2')

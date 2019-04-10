@@ -191,7 +191,7 @@ cs = hnxloc.get_clearsky(times, model='ineichen', linke_turbidity=3)
 plt.plot(times, hourlySolradData[:,1], label = 'Direct')
 plt.plot(times, hourlySolradData[:,2], label = 'Diffuse')
 
-plt.plot(times, cs['dhi']*10, label = 'Clear sky')
+plt.plot(times, cs['dni']*10, label = 'Clear sky')
 
 #plt.plot(times, (hourlySolradData[:,1]/(cs['dhi']*10))*100, label = 'Ratio')
 
