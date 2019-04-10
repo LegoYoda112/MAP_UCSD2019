@@ -87,7 +87,7 @@ times = pd.DatetimeIndex(weatherData[:,1])
 cs = hnxloc.get_clearsky(times, model='ineichen', linke_turbidity=3)
 #
 # plt.plot(weatherData[:,1],weatherData[:,3], label = 'cloud-amount')
-# plt.plot(times, cs['dhi'], label = 'Clear sky')
+# plt.plot(times, cs['dni'], label = 'Clear sky')
 # plt.legend(loc = 'upper left')
 # plt.xlabel('Time')
 # plt.show()
