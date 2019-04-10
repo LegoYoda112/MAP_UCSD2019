@@ -109,7 +109,7 @@ for index in range(0, len(MLP_predicted)):
     if(MLP_predicted[index] < 50):
         MLP_predicted[index] = 0
 
-    fileOutput.append([MLP_predicted[index], cs['dhi'][index]])
+    fileOutput.append([MLP_predicted[index], cs['dni'][index]])
 
 
 file_name = 'forecastPage/predicted.csv'
@@ -118,18 +118,3 @@ print(fileOutput)
 
 predictedDF = pd.DataFrame(fileOutput, columns = ["Solar power", "Clear sky"])
 predictedDF.to_csv(file_name, sep='\t', encoding='utf-8', )
-
-plt.style.use('seaborn-darkgrid')
-
-plt.plot(times, MLP_predicted, label = 'Predicted using MLPRegressor')
-plt.plot(times, cs['dhi']*(1-weatherData[:,3]/100)*10, label = 'Predicted using just cloudy %')
-#
-# #plt.plot(times, cs['dhi']*(model.predict(predictInputs)), label = 'Predicted')
-plt.legend(loc = 'upper right')
-plt.title('Solar power predictions for ' + area_description.text)
-plt.ylabel('Watts m^-2')
-plt.xlabel('Time')
-plt.tight_layout(pad = 1)
-
-# CHANGE THE FILE NAMES BEFORE UPLOADING
-plt.savefig('forecastPage/sanDiegoForecast.png')
