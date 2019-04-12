@@ -18,6 +18,10 @@ register_matplotlib_converters()
 
 print('Enter the location of the area you want to predict the solar power for')
 
+#lat = '42.264'
+#lon = '-71.801'
+
+#San Diego
 lat = '32.9483'
 lon = '-117.12299'
 
@@ -95,7 +99,7 @@ cs = hnxloc.get_clearsky(times, model='ineichen', linke_turbidity=3)
 predictInputs = []
 
 for index in range(0, len(weatherData)):
-    predictInputs.append([weatherData[index][2],weatherData[index][3], weatherData[index][4], weatherData[index][5], weatherData[index][6], cs['dhi'][index]])
+    predictInputs.append([weatherData[index][2],weatherData[index][3], weatherData[index][4], weatherData[index][5], weatherData[index][6], cs['dni'][index]])
 
 #Reload the model CHANGE THE FILE NAMES BEFORE UPLOADING
 modelReloaded = load('MLPRegressor_model.joblib')
@@ -113,8 +117,5 @@ for index in range(0, len(MLP_predicted)):
 
 
 file_name = 'forecastPage/predicted.csv'
-
-print(fileOutput)
-
 predictedDF = pd.DataFrame(fileOutput, columns = ["Solar power", "Clear sky"])
 predictedDF.to_csv(file_name, sep='\t', encoding='utf-8', )
