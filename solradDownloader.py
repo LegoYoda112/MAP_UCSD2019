@@ -27,8 +27,8 @@ if not os.path.exists(directoryName):
 directoryPath = '%s/%s' % (os.getcwd(), directoryName)
 os.chdir(directoryPath)
 
-dateStart = 19090
-dateEnd = 19094
+dateStart = 19100
+dateEnd = 19104
 
 currentDownloadDate = dateStart;
 

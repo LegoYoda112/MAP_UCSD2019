@@ -77,7 +77,7 @@ def readSolradRange(startDay, endDay):
     return outputData
 
 #Read the solrad data
-solradData = readSolradRange(19060,19094)
+solradData = readSolradRange(19060,19104)
 
 #Convert the solrad data into houly averages.
 hourlySolradData = []
@@ -148,7 +148,7 @@ noaa_data_array = np.array(noaa_data_array)
 #LINING THE ARRAYS UP
 #We need to make sure each array (solrad and noaa) is the same length and each index corrisponds to the same entry
 startDate = datetime(2019,3,1)
-endDate = datetime(2019,4,4)
+endDate = datetime(2019,4,15)
 
 #Trim the NOAA data
 trimmed_noaa_data_array = []
@@ -173,7 +173,6 @@ for index in range(0, len(hourlySolradData)):
     if(hourlySolradData[index][0] != noaa_data_array[index][0]):
         noaa_data_array.insert(index, noaa_data_array[index])
 
-
 noaa_data_array = np.array(noaa_data_array)
 
 #CALCULATING CLEAR SKY ------------------
@@ -187,6 +186,11 @@ times = pd.DatetimeIndex(hourlySolradData[:,0])
 #Computes the clear sky (theoretical max) for each entry in the times array
 cs = hnxloc.get_clearsky(times, model='ineichen', linke_turbidity=3)
 
+print('Solrad length')
+print(len(hourlySolradData))
+print('Noaa length')
+print(len(noaa_data_array))
+
 #PLOTTING --------------------
 plt.plot(times, hourlySolradData[:,1], label = 'Direct')
 plt.plot(times, hourlySolradData[:,2], label = 'Diffuse')
@@ -195,8 +199,8 @@ plt.plot(times, cs['dni'], label = 'Clear sky')
 
 #plt.plot(times, (hourlySolradData[:,1]/(cs['dhi']*10))*100, label = 'Ratio')
 
-plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100), label = 'Predicted')
-#plt.plot(times, (100-noaa_data_array[:,2]), label = 'Clouds')
+#plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100), label = 'Predicted')
+plt.plot(times, (100-noaa_data_array[:,2]), label = 'Clouds')
 #
 #plt.plot(times,noaa_data_array[:,1]*3, label = 'temp')
 plt.plot(noaa_data_array[:,0],noaa_data_array[:,2], label = 'cloud-amount')

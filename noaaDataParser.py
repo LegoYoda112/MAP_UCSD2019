@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from datetime import timedelta
 
-csv_array = pd.read_csv('noaa\\noaa-ORT.csv').as_matrix()
+csv_array = pd.read_csv('noaa\\noaa-hnx.csv').as_matrix()
 
 ordered_hourly = []
 hourly_forecast = []
@@ -26,6 +26,8 @@ for i in range(0,len(csv_array)-1):
 
 
 ordered_hourly = np.array(ordered_hourly)
+
+print(len(ordered_hourly))
 
 print(ordered_hourly[0][0][3])
 
