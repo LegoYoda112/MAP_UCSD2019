@@ -28,20 +28,32 @@
         csvData[i][2] = parseFloat(csvData[i][2]);
       }
 
-      var predictedSum = 0;
-      var clearskySum = 0;
+      function calcSolarPercent(startHour, endHour) {
+        var predictedSum = 0;
+        var clearskySum = 0;
 
-      for(var i = 1; i<24; i++){
-        predictedSum += csvData[i][1];
-        clearskySum += csvData[i][2];
+        for(var i = startHour; (i<endHour+1); i++){
+          predictedSum += csvData[i][1];
+          clearskySum += csvData[i][2];
+        }
+
+        var ratio = predictedSum/clearskySum;
+        var percent = parseInt(ratio*100);
+
+        if(percent>100){
+          percent = 100;
+        }
+
+        return percent;
       }
 
-      var ratio = predictedSum/clearskySum;
-      var percent = parseInt(ratio*100);
-
-      if(percent>100){
-        percent = 100;
-      }
+      var percent1 = calcSolarPercent(1,24);
+      var percent2 = calcSolarPercent(24,24*2);
+      var percent3 = calcSolarPercent(24*2,24*3);
+      var percent4 = calcSolarPercent(24*3,24*4);
+      var percent5 = calcSolarPercent(24*4,24*5);
+      var percent6 = calcSolarPercent(24*5,24*6);
+      var percent7 = calcSolarPercent(24*6,24*7);
 
       function drawChart() {
 
@@ -52,15 +64,40 @@
           legend: { position: 'bottom' },
           chartArea: {'width': '85%', 'height': '80%'},
           vAxis: {title: 'Watts'},
-          hAxis: {title: 'Time'}
+          hAxis: {title: 'Time'},
+          pointSize: 0,
+          animation: {"startup": true},
+          series: {
+            0: { lineWidth: 2, color: '#e7711b', areaOpacity: '40%'},
+            1: { lineWidth: 3, color: '#1c91c0', areaOpacity: 0}
+          },
+          backgroundColor: '#ffffff'
         };
 
-        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+        var chart = new google.visualization.AreaChart(document.getElementById('curve_chart'));
 
         chart.draw(data, options);
 
-        document.getElementById('largePercent').innerHTML = percent+"%";
-        document.getElementById('innerSunBar').style.width = percent+"%";
+        document.getElementById('largePercent').innerHTML = percent1+"%";
+        document.getElementById('innerSunBar').style.width = percent1+"%";
+
+        document.getElementById('largePercent2').innerHTML = percent2+"%";
+        document.getElementById('innerSunBar2').style.width = percent2+"%";
+
+        document.getElementById('largePercent3').innerHTML = percent3+"%";
+        document.getElementById('innerSunBar3').style.width = percent3+"%";
+
+        document.getElementById('largePercent4').innerHTML = percent4+"%";
+        document.getElementById('innerSunBar4').style.width = percent4+"%";
+
+        document.getElementById('largePercent5').innerHTML = percent5+"%";
+        document.getElementById('innerSunBar5').style.width = percent5+"%";
+
+        document.getElementById('largePercent6').innerHTML = percent6+"%";
+        document.getElementById('innerSunBar6').style.width = percent6+"%";
+
+        document.getElementById('largePercent7').innerHTML = percent7+"%";
+        document.getElementById('innerSunBar7').style.width = percent7+"%";
       }
     </script>
 
@@ -75,15 +112,55 @@
       <div class = "fullWideGrey">
         <div class = "middleBox">
           <div class = "weatherbox1">
-            <div id = "largePercent">0%</div>
+            <div class = 'largePercent' id = "largePercent">0%</div>
             <div class = "whiteText">in the next 24 hours</div>
-            <div id = "sunBar"><div id = "innerSunBar"></div></div>
+            <div class = "sunBar" id = "sunBar"><div id = "innerSunBar"></div></div>
           </div>
           <p class = 'normalParagraph'> Solar power prediction for San Diego using a MLPRegression model trained on data from Hanford CA. To learn more about how it works, check out the link below. (coming soon)</p>
         </div>
       </div>
       <div class = "fullWideYellow">
         <div class = "middleBox"><div id="curve_chart" class = "mainChart"></div></div>
+      </div>
+
+      <div class = "fullWideGrey">
+        <div class = "middleBox">
+          <div class = "weatherbox2">
+            <div class = 'largePercent' id = "largePercent2">0%</div>
+            <div class = "whiteText">1 day from now</div>
+            <div class = "sunBar" id = "sunBar"><div id = "innerSunBar2"></div></div>
+          </div>
+
+          <div class = "weatherbox2">
+            <div class = 'largePercent' id = "largePercent3">0%</div>
+            <div class = "whiteText">2 days from now</div>
+            <div class = "sunBar" id = "sunBar"><div id = "innerSunBar3"></div></div>
+          </div>
+
+          <div class = "weatherbox2">
+            <div class = 'largePercent' id = "largePercent4">0%</div>
+            <div class = "whiteText">3 days from now</div>
+            <div class = "sunBar" id = "sunBar"><div id = "innerSunBar4"></div></div>
+          </div>
+
+          <div class = "weatherbox2">
+            <div class = 'largePercent' id = "largePercent5">0%</div>
+            <div class = "whiteText">4 days from now</div>
+            <div class = "sunBar" id = "sunBar"><div id = "innerSunBar5"></div></div>
+          </div>
+
+          <div class = "weatherbox2">
+            <div class = 'largePercent' id = "largePercent6">0%</div>
+            <div class = "whiteText">5 days from now</div>
+            <div class = "sunBar" id = "sunBar"><div id = "innerSunBar6"></div></div>
+          </div>
+
+          <div class = "weatherbox2">
+            <div class = 'largePercent' id = "largePercent7">0%</div>
+            <div class = "whiteText">6 days from now</div>
+            <div class = "sunBar" id = "sunBar"><div id = "innerSunBar7"></div></div>
+          </div>
+        </div>
       </div>
     </div>
   </body>
