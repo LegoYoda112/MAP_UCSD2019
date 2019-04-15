@@ -3,14 +3,14 @@ body{
   padding: 0;
 }
 
-#largePercent{
+.largePercent{
   font-size: 3.5em;
   font-family: 'Russo One', sans-serif;
   color: white;
   margin-top: -5px;
 }
 
-#sunBar {
+.sunBar {
   background-color: #49493E;
   border-radius: 13px;
   border: 2px solid #FFFFFF;
@@ -18,7 +18,7 @@ body{
   margin-top: 15px;
 }
 
-#sunBar>div {
+.sunBar>div {
   transition: width 0.5s;
   width: 0%;
   height: 18px;
@@ -55,8 +55,24 @@ body{
   box-shadow: 2px 5px 30px rgba(0, 0, 0, 0.6);
 }
 
+.weatherbox2{
+  width: 160px;
+  height: 160px;
+  background: #414E58;
+  box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  margin: 20px;
+  padding: 25px;
+  transition: 0.3s;
+}
+
+.weatherbox2:hover{
+  box-shadow: 2px 5px 30px rgba(0, 0, 0, 0.6);
+}
+
 .middleBox{
   display: flex;
+  flex-wrap:wrap;
   flex-direction: row;
   margin: auto;
   max-width: 1100px;
@@ -85,7 +101,6 @@ body{
 .fullWideYellow{
   background: #F3EA9C;
   width: 100%;
-  padding: 10px;
 }
 
 .normalParagraph{
