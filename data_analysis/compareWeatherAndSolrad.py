@@ -226,7 +226,7 @@ X = []
 y = []
 for index in range(1, len(noaa_data_array)-1):
     #print(cs['dhi'][index] != 0)
-    X.append([noaa_data_array[index][1],noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dhi'][index]])
+    X.append([noaa_data_array[index][1],noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dni'][index]])
     y.append(hourlySolradData[index][1])
 
     #If we use the output of the net as the ratio
@@ -257,7 +257,7 @@ model.fit(X_train, y_train)
 
 predictInputs = []
 for index in range(0, len(noaa_data_array)):
-    predictInputs.append([noaa_data_array[index][1],noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dhi'][index]])
+    predictInputs.append([noaa_data_array[index][1],noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dni'][index]])
 
 #plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100)*10, label = 'Predicted using just cloud %')
 
