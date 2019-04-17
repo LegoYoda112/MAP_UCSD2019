@@ -7,8 +7,11 @@ from datetime import datetime
 from datetime import timedelta
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import pvlib as pv
+import matplotlib.pyplot as plt
+
+from matplotlib.pyplot import figure
+figure(num=None, figsize=(15, 6), dpi=100)
 
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
@@ -85,7 +88,7 @@ times = pd.DatetimeIndex(weatherData[:,1])
 cs = hnxloc.get_clearsky(times, model='ineichen', linke_turbidity=3)
 #
 # plt.plot(weatherData[:,1],weatherData[:,3], label = 'cloud-amount')
-# plt.plot(times, cs['dhi'], label = 'Clear sky')
+# plt.plot(times, cs['dni'], label = 'Clear sky')
 # plt.legend(loc = 'upper left')
 # plt.xlabel('Time')
 # plt.show()
@@ -93,22 +96,23 @@ cs = hnxloc.get_clearsky(times, model='ineichen', linke_turbidity=3)
 predictInputs = []
 
 for index in range(0, len(weatherData)):
-    predictInputs.append([weatherData[index][2],weatherData[index][3], weatherData[index][4], weatherData[index][5], weatherData[index][6], cs['dhi'][index]])
+    predictInputs.append([weatherData[index][2],weatherData[index][3], weatherData[index][4], weatherData[index][5], weatherData[index][6], cs['dni'][index]])
 
-
-plt.style.use('seaborn-darkgrid')
-
-#Reload the model
+#Reload the model CHANGE THE FILE NAMES BEFORE UPLOADING
 modelReloaded = load('MLPRegressor_model.joblib')
 print('Model loaded')
 
-plt.plot(times, (modelReloaded.predict(predictInputs)), label = 'Predicted using MLPRegressor and reloaded')
-plt.plot(times, cs['dni']*(1-weatherData[:,3]/100)*10, label = 'Predicted')
+MLP_predicted = modelReloaded.predict(predictInputs)
 
-#plt.plot(times, cs['dni']*(model.predict(predictInputs)), label = 'Predicted')
-plt.legend(loc = 'upper right')
-plt.title('Solar power predictions for' + area_description.text)
-plt.ylabel('Watts m^-2')
-plt.xlabel('Time')
-plt.tight_layout(pad = 0)
-plt.show()
+fileOutput = []
+
+for index in range(0, len(MLP_predicted)):
+    if(MLP_predicted[index] < 50):
+        MLP_predicted[index] = 0
+
+    fileOutput.append([MLP_predicted[index], cs['dni'][index]])
+
+
+file_name = 'forecastPage/predicted.csv'
+predictedDF = pd.DataFrame(fileOutput, columns = ["Solar power", "Clear sky"])
+predictedDF.to_csv(file_name, sep='\t', encoding='utf-8', )
