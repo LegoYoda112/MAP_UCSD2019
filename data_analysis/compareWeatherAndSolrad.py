@@ -6,6 +6,7 @@ from datetime import datetime
 from datetime import timedelta
 import pvlib as pv
 import math
+import os
 
 locationName = 'hnx'
 #TODO: Figure out why slc isn't working
