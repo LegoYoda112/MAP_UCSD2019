@@ -8,6 +8,10 @@ print('Connecting to server...')
 
 locationName = 'hnx'
 
+master_directory = os.path.dirname(os.getcwd())
+data_directory = master_directory + '\\data\\'
+solrad_directory = data_directory + 'solrad_data\\' + locationName + '\\'
+
 try:
     ftp = ftplib.FTP('aftp.cmdl.noaa.gov')
     ftp.login()
@@ -16,19 +20,18 @@ except ftplib.all_errors as e:
     errorcode_string = str(e).split(None, 1)[0]
 
 #Setting the current working directory to 2019
-ftp.cwd('/data/radiation/solrad/' + locationName + '/2019/')
-#ftp.cwd('/data/radiation/solrad/realtime/' + locationName)
+#ftp.cwd('/data/radiation/solrad/' + locationName + '/2019/')
+ftp.cwd('/data/radiation/solrad/realtime/' + locationName)
 
-directoryName = 'solrad_data/' + locationName + '/'
-if not os.path.exists(directoryName):
-    os.makedirs(directoryName)
+directoryName = solrad_directory
+print(directoryName)
+#if not os.path.exists(directoryName):
+#    os.makedirs(directoryName)
 
-# Move into the folder
-directoryPath = '%s/%s' % (os.getcwd(), directoryName)
-os.chdir(directoryPath)
+os.chdir(directoryName)
 
-dateStart = 19100
-dateEnd = 19104
+dateStart = 19112
+dateEnd =   19113
 
 currentDownloadDate = dateStart;
 

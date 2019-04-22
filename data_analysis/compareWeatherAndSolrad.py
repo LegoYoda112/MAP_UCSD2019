@@ -8,10 +8,16 @@ import pvlib as pv
 import math
 import os
 
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
+
 locationName = 'hnx'
 #TODO: Figure out why slc isn't working
 
-directoryName = 'solrad_data/' + locationName + '/'
+master_directory = os.path.dirname(os.getcwd())
+data_directory = master_directory + '\\data\\'
+noaa_directory = data_directory + '\\noaa\\'
+solrad_directory = data_directory + 'solrad_data\\' + locationName + '\\'
 
 #SOLRAD READER -----------------
 def readSolradDataFile (filename):
@@ -68,17 +74,16 @@ def readSolradDataFile (filename):
 
     return ordered_file_contents
 
-filename = 'solrad_data/'+locationName + '/'
-
 def readSolradRange(startDay, endDay):
-    outputData = np.array(readSolradDataFile('solrad_data/' + locationName + '/' + locationName + str(startDay) + '.dat'))
+    file_path = solrad_directory + locationName + str(startDay) + '.dat'
+    outputData = np.array(readSolradDataFile(file_path))
     for day in range((startDay+1), (endDay+1)):
-        filename = 'solrad_data/' + locationName + '/' + locationName + str(day) + '.dat'
-        outputData = np.append(outputData, readSolradDataFile(filename), axis = 0)
+        file_path = solrad_directory + locationName + str(day) + '.dat'
+        outputData = np.append(outputData, readSolradDataFile(file_path), axis = 0)
     return outputData
 
 #Read the solrad data
-solradData = readSolradRange(19060,19104)
+solradData = readSolradRange(19060,19111)
 
 #Convert the solrad data into houly averages.
 hourlySolradData = []
@@ -107,9 +112,7 @@ for i in range(0, int(len(solradData)/60)):
 hourlySolradData = np.array(hourlySolradData)
 
 #NOAA READER ---------------------
-csv_array = pd.read_csv('noaa\\noaa-' + locationName + '.csv').as_matrix()
-
-
+csv_array = pd.read_csv(noaa_directory + 'noaa-' + locationName + '.csv').as_matrix()
 
 ordered_hourly = []
 hourly_forecast = []
@@ -149,7 +152,7 @@ noaa_data_array = np.array(noaa_data_array)
 #LINING THE ARRAYS UP
 #We need to make sure each array (solrad and noaa) is the same length and each index corrisponds to the same entry
 startDate = datetime(2019,3,1)
-endDate = datetime(2019,4,15)
+endDate = datetime(2019,4,20)
 
 #Trim the NOAA data
 trimmed_noaa_data_array = []
@@ -189,7 +192,7 @@ cs = hnxloc.get_clearsky(times, model='ineichen', linke_turbidity=3)
 
 print('Solrad length')
 print(len(hourlySolradData))
-print('Noaa length')
+print('NOAA length')
 print(len(noaa_data_array))
 
 #PLOTTING --------------------
@@ -249,12 +252,9 @@ print("Test")
 
 from sklearn.neural_network import MLPRegressor
 
-model = MLPRegressor(max_iter = 1000, verbose = True, hidden_layer_sizes=(500,100), solver = 'adam')
+model = MLPRegressor(max_iter = 1000, verbose = True, hidden_layer_sizes=(100), solver = 'adam')
 
 model.fit(X_train, y_train)
-
-#plt.scatter(y_train, model.predict(X_train), label = 'Direct')
-#plt.show()
 
 predictInputs = []
 for index in range(0, len(noaa_data_array)):
@@ -264,8 +264,6 @@ for index in range(0, len(noaa_data_array)):
 
 plt.plot(times, hourlySolradData[:,1], label = 'Actual')
 plt.plot(times, (model.predict(predictInputs)), label = 'Predicted using MLPRegressor', linestyle='dashed', linewidth=1.5)
-
-#plt.plot(times, cs['dhi']*(model.predict(predictInputs)), label = 'Predicted')
 
 plt.legend(loc = 'upper left')
 plt.show()
