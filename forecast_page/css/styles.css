@@ -42,7 +42,7 @@ body{
 .weatherbox1{
   width: 160px;
   height: 160px;
-  background: #414E58;
+  background: linear-gradient(301.1deg, #4481EB 1.23%, #04BEFE 76.13%);
   box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   margin: 10px;
@@ -58,7 +58,7 @@ body{
 .weatherbox2{
   width: 160px;
   height: 160px;
-  background: #414E58;
+  background: linear-gradient(301.1deg, #4481EB 1.23%, #04BEFE 76.13%);
   box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   margin: 20px;

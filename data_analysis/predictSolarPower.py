@@ -18,8 +18,10 @@ register_matplotlib_converters()
 
 print('Enter the location of the area you want to predict the solar power for')
 
-lat = '32.9483'
-lon = '-117.12299'
+#lat = '32.9483'
+#lon = '-117.12299'
+lat = input('Lat: ')
+lon = input('Lon: ')
 
 print('Downloading...')
 
@@ -87,11 +89,6 @@ times = pd.DatetimeIndex(weatherData[:,1])
 #Computes the clear sky (theoretical max) for each entry in the times array
 cs = hnxloc.get_clearsky(times, model='ineichen', linke_turbidity=3)
 #
-# plt.plot(weatherData[:,1],weatherData[:,3], label = 'cloud-amount')
-# plt.plot(times, cs['dni'], label = 'Clear sky')
-# plt.legend(loc = 'upper left')
-# plt.xlabel('Time')
-# plt.show()
 
 predictInputs = []
 
@@ -112,7 +109,13 @@ for index in range(0, len(MLP_predicted)):
 
     fileOutput.append([MLP_predicted[index], cs['dni'][index]])
 
+plt.plot(weatherData[:,1],weatherData[:,3], label = 'cloud-amount')
+plt.plot(times, cs['dni'], label = 'Clear sky')
+plt.plot(times, MLP_predicted, label = 'Predicted')
+plt.legend(loc = 'upper left')
+plt.xlabel('Time')
+plt.show()
 
-file_name = 'forecastPage/predicted.csv'
-predictedDF = pd.DataFrame(fileOutput, columns = ["Solar power", "Clear sky"])
-predictedDF.to_csv(file_name, sep='\t', encoding='utf-8', )
+#file_name = 'forecastPage/predicted.csv'
+#predictedDF = pd.DataFrame(fileOutput, columns = ["Solar power", "Clear sky"])
+#predictedDF.to_csv(file_name, sep='\t', encoding='utf-8', )

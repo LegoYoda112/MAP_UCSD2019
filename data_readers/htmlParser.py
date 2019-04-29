@@ -45,27 +45,27 @@ weatherData = []
 firstDay = day_containers[0].text
 
 for index in range(0,len(time_containers)):
-    
+
     #Time and day
     time = time_containers[index].text
     day = day_containers[index].text
-    
+
     if(day!=firstDay):
         dayOffset = 1
     else:
         dayOffset = 0
-    
+
     valtime = datetime_object.strptime((day + time),  '%a%I:%M %p')
-    
+
     valtime = valtime.replace(datetime_object.year, datetime_object.month,  datetime_object.day+dayOffset)
-    
+
     description = description_containers[index].span.text
     temp = temp_containers[index].span.text
     precip = precip_containers[index].find_all('span')[2].text
     humidity = humidity_containers[index].span.span.text
     wind = wind_containers[index].span.text
-    
-    
+
+
     weatherData.append([datetime_object, valtime, description, temp, precip, humidity, wind])
 
 weatherData = np.array(weatherData)
@@ -106,7 +106,7 @@ for index in range(0,len(time_containers)):
     wind_speed = wind_speed_containers[index].text
     humidity = humidity_containers[index].text
     probability_of_precipitation = int(probability_of_precipitation_containers[index].text)
-    
+
     weatherData.append([datetime_object, time,temperature,cloud_amount,wind_speed,humidity,probability_of_precipitation])
 
 weatherData = np.array(weatherData)
@@ -115,5 +115,5 @@ weatherData = np.array(weatherData)
 #----Saving the csv file----
 weatherDataFrame = pd.DataFrame(weatherData, columns=['reftime','time','temp', 'cloud-amount', 'wind-speed', 'humidity','probability_of_precipitation'])
 file_name = os.getcwd() + '/noaa/noaa_' + formattedTime + '.csv'
-weatherDataFrame.to_csv(file_name, sep='\t', encoding='utf-8')
+weatherDataFrame.to_csv(file_name, sep='\t', encoding='utf-8', mode = 'a')
 print('Saved to: ' + file_name)

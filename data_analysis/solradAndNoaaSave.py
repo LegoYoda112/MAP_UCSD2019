@@ -141,7 +141,7 @@ ordered_hourly = np.array(ordered_hourly)
 
 
 noaa_data_array = []
-predicted_lookahead = 0
+predicted_lookahead = 1
 
 for hours in ordered_hourly:
     hours = np.array(hours)
@@ -151,7 +151,6 @@ for hours in ordered_hourly:
 
 noaa_data_array = np.array(noaa_data_array)
 
-print(noaa_data_array)
 
 #LINING THE ARRAYS UP
 #We need to make sure each array (solrad and noaa) is the same length and each index corrisponds to the same entry
@@ -222,60 +221,12 @@ plt.ylabel('Watts m^-2')
 plt.xlabel('Time')
 plt.show()
 
+outputData = []
 
-# plt.scatter((100-noaa_data_array[:,5]), (hourlySolradData[:,1]/(cs['dhi']*10))*100)
-# plt.xlabel('Clouds - 1')
-# plt.ylabel('Solrad/clearsky')
-# plt.show()
-
-
-#Machine learning
-X = []
-y = []
 for index in range(1, len(noaa_data_array)-1):
-    #print(cs['dhi'][index] != 0)
-    X.append([noaa_data_array[index][1], 1 - noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dni'][index]])
-    y.append(hourlySolradData[index][1])
+    outputData.append([hourlySolradData[index][1], noaa_data_array[index][1], noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dni'][index]])
 
-    #If we use the output of the net as the ratio
-    # if(cs['dhi'][index] != 0):
-    #     X.append([noaa_data_array[index][2], noaa_data_array[index][4], noaa_data_array[index][5]])
-    #     y.append((hourlySolradData[index][1]/(cs['dhi'][index])))
 
-from sklearn.model_selection import train_test_split
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0)
-
-from sklearn.preprocessing import StandardScaler
-scaler = StandardScaler()
-
-#train_scaled = scaler.fit_transform(X_train)
-#test_scaled = scaler.transform(X_test)
-
-print("Test")
-
-from sklearn.neural_network import MLPRegressor
-
-model = MLPRegressor(max_iter = 1000, verbose = True, hidden_layer_sizes=(500,100,100), solver = 'lbfgs')
-
-model.fit(X_train, y_train)
-
-predictInputs = []
-for index in range(0, len(noaa_data_array)):
-    predictInputs.append([noaa_data_array[index][1],1 - noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dni'][index]])
-
-#plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100)*10, label = 'Predicted using just cloud %')
-
-plt.plot(times, hourlySolradData[:,1], label = 'Actual')
-plt.plot(times, (model.predict(predictInputs)), label = 'Predicted using MLPRegressor', linestyle='dashed', linewidth=1.5)
-
-plt.legend(loc = 'upper left')
-plt.show()
-
-plt.scatter(hourlySolradData[:,1],model.predict(predictInputs))
-plt.show()
-
-from joblib import dump
-
-dump(model, 'MLPRegressor_model.joblib')
-print('Model has been dumped')
+file_name = 'savedData.csv'
+predictedDF = pd.DataFrame(outputData, columns = ["direct", 'temp', 'cloud_amount', 'wind_speed', 'humidity','probability_of_precipitation', 'clear_sky'])
+predictedDF.to_csv(file_name, encoding='utf-8', mode = 'a')
