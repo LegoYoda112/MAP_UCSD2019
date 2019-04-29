@@ -141,7 +141,7 @@ ordered_hourly = np.array(ordered_hourly)
 
 
 noaa_data_array = []
-predicted_lookahead = 1
+predicted_lookahead = 48
 
 for hours in ordered_hourly:
     hours = np.array(hours)
@@ -200,7 +200,8 @@ print(len(noaa_data_array))
 
 #PLOTTING --------------------
 plt.plot(times, hourlySolradData[:,1], label = 'Direct')
-plt.plot(times, hourlySolradData[:,4], label = 'Diffuse')
+plt.plot(times, hourlySolradData[:,1], label = 'Direct')
+plt.plot(times, hourlySolradData[:,3], label = 'Diffuse')
 
 plt.plot(times, cs['dni'], label = 'Clear sky')
 
@@ -224,9 +225,9 @@ plt.show()
 outputData = []
 
 for index in range(1, len(noaa_data_array)-1):
-    outputData.append([hourlySolradData[index][1], noaa_data_array[index][1], noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dni'][index]])
+    outputData.append([hourlySolradData[index][0], hourlySolradData[index][1], hourlySolradData[index][2], hourlySolradData[index][3], hourlySolradData[index][4], noaa_data_array[index][1], noaa_data_array[index][2], noaa_data_array[index][3], noaa_data_array[index][4], noaa_data_array[index][5], cs['dni'][index]])
 
 
 file_name = 'savedData.csv'
-predictedDF = pd.DataFrame(outputData, columns = ["direct", 'temp', 'cloud_amount', 'wind_speed', 'humidity','probability_of_precipitation', 'clear_sky'])
-predictedDF.to_csv(file_name, encoding='utf-8', mode = 'a')
+predictedDF = pd.DataFrame(outputData, columns = ["timestamp","direct", "directSD", "diffuse", "diffuseSD", 'temp', 'cloud_amount', 'wind_speed', 'humidity','probability_of_precipitation', 'clear_sky'])
+predictedDF.to_csv(file_name, encoding='utf-8', mode = 'a', header = True)
