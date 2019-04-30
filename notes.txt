@@ -14,3 +14,23 @@ pythonic way
 jupyterLab
 
 Try installing packages through command line on the server
+
+
+
+-Poster notes
+Figure out what to emphasise
+
+Hybrid models
+use pvlib
+
+
+"Simulate" the power output of a home
+
+poa is ghi if the panel is horazontal
+
+https://pvpmc.sandia.gov/modeling-steps/1-weather-design-inputs/plane-of-array-poa-irradiance/calculating-poa-irradiance/angle-of-incidence/
+
+
+https://sam.nrel.gov/
+
+SDGE time of use
