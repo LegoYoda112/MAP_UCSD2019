@@ -61,7 +61,7 @@ def readSolradDataFile (filename):
         if(row == rowLength-1):
             column +=1
 
-            timeStamp = datetime(int(ordered_row[0]),int(ordered_row[2]),int(ordered_row[3]),int(ordered_row[4]),int(ordered_row[5]))
+            timeStamp = datetime(int(ordered_row[0]),int(ordered_row[2]),int(ordered_row[3]),int(ordered_row[4]),0)
             ordered_row.append(timeStamp)
 
             ordered_file_contents.append(ordered_row)
@@ -88,12 +88,12 @@ solradData = readSolradRange(19060,19122)
 #Convert the solrad data into houly averages.
 hourlySolradData = []
 
-for i in range(0, int(len(solradData)/60)):
+for i in range(1, int(len(solradData)/60)-1):
     hourOfSolradData = []
     timeStamp = solradData[(i*60)][22]
     for j in range(0, 59):
-        direct = solradData[(i*60)+j][10]
-        diffuse = solradData[(i*60)+j][12]
+        direct = solradData[(i*60)+j-30][10]
+        diffuse = solradData[(i*60)+j-30][12]
         hourOfSolradData.append(np.array([direct, diffuse]))
         #print(solradData[(i*60)+j][10])
         #print(solradData[(i*60)+j][5])
@@ -129,7 +129,7 @@ for i in range(0,len(csv_array)-1):
 
     time = csv_array[i][2]
     timezoneOffset = int(time[-5:-3])
-    time = datetime.strptime(time[:-6], '%Y-%m-%dT%H:%M:%S') + timedelta(hours = timezoneOffset)
+    time = datetime.strptime(time[:-9], '%Y-%m-%dT%H:%M') + timedelta(hours = timezoneOffset)
 
     hour_forecast = csv_array[i]
     hour_forecast = np.append(hour_forecast, time)
@@ -155,7 +155,7 @@ noaa_data_array = np.array(noaa_data_array)
 #LINING THE ARRAYS UP
 #We need to make sure each array (solrad and noaa) is the same length and each index corrisponds to the same entry
 startDate = datetime(2019,3,1)
-endDate = datetime(2019,4,20)
+endDate = datetime(2019,5,1)
 
 #Trim the NOAA data
 trimmed_noaa_data_array = []
@@ -165,17 +165,20 @@ for item in noaa_data_array:
         trimmed_noaa_data_array.append(item)
 noaa_data_array = trimmed_noaa_data_array
 
+print(noaa_data_array[len(noaa_data_array)-1])
+
 #Trip the Solrad data
 trimmed_solrad_data_array = []
 
 for item in hourlySolradData:
     if((startDate < item[0]) & (endDate > item[0])):
         trimmed_solrad_data_array.append(item)
-
 hourlySolradData = np.array(trimmed_solrad_data_array)
 
+print(hourlySolradData[len(hourlySolradData)-1])
+
 #Our downloaded noaa data has gaps, so we copy the previous values until we get another good data point
-for index in range(0, len(hourlySolradData)):
+for index in range(0, len(hourlySolradData)-1):
     #print(hourlySolradData[index][0] == noaa_data_array[index][0])
     if(hourlySolradData[index][0] != noaa_data_array[index][0]):
         noaa_data_array.insert(index, noaa_data_array[index])
@@ -199,19 +202,19 @@ print('NOAA length')
 print(len(noaa_data_array))
 
 #PLOTTING --------------------
-plt.plot(times, hourlySolradData[:,1], label = 'Direct')
-plt.plot(times, hourlySolradData[:,1], label = 'Direct')
-plt.plot(times, hourlySolradData[:,3], label = 'Diffuse')
+#plt.plot(hourlySolradData[:,1], label = 'Direct')
+#plt.plot(hourlySolradData[:,1], label = 'Direct')
+plt.plot(hourlySolradData[:,3], label = 'Diffuse')
 
-plt.plot(times, cs['dni'], label = 'Clear sky')
+#plt.plot(cs['dni'], label = 'Clear sky')
 
 #plt.plot(times, (hourlySolradData[:,1]/(cs['dhi']*10))*100, label = 'Ratio')
 
 #plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100), label = 'Predicted')
-plt.plot(times, (100-noaa_data_array[:,2]), label = 'Clouds')
+#plt.plot((100-noaa_data_array[:,2]), label = 'Clouds')
 #
 #plt.plot(times,noaa_data_array[:,1]*3, label = 'temp')
-plt.plot(noaa_data_array[:,0],noaa_data_array[:,2], label = 'cloud-amount')
+#plt.plot(noaa_data_array[:,2], label = 'cloud-amount')
 #plt.plot(noaa_data_array[:,0],noaa_data_array[:,3], label = 'wind-speed')
 #plt.plot(noaa_data_array[:,0],noaa_data_array[:,4], label = 'humidity')
 #plt.plot(noaa_data_array[:,0],noaa_data_array[:,5], label = 'probability_of_precipitation')
@@ -230,4 +233,5 @@ for index in range(1, len(noaa_data_array)-1):
 
 file_name = 'savedData.csv'
 predictedDF = pd.DataFrame(outputData, columns = ["timestamp","direct", "directSD", "diffuse", "diffuseSD", 'temp', 'cloud_amount', 'wind_speed', 'humidity','probability_of_precipitation', 'clear_sky'])
-predictedDF.to_csv(file_name, encoding='utf-8', mode = 'a', header = True)
+predictedDF.to_csv(file_name, encoding='utf-8', header = True)
+#predictedDF.to_csv(file_name, encoding='utf-8', mode = 'a', header = False)

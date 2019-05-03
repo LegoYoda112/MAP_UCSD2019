@@ -17,7 +17,7 @@ data = pd.read_csv("savedData.csv")
 # data['probability_of_precipitation']
 
 unshapedX = np.array([data['temp'], data['cloud_amount'], data['humidity'], data['probability_of_precipitation'], data['clear_sky']])
-unshapedY = np.array([data["direct"], data["directSD"]])
+unshapedY = np.array([data["direct"], data["diffuse"]])
 #Inputs and outputs
 X = unshapedX.transpose(1,0)
 y = unshapedY.transpose(1,0)
@@ -35,9 +35,9 @@ model.fit(X_train, y_train)
 predictions = model.predict(X)
 
 plt.plot(data.index, y[:, 0], label = 'Actual Diffuse')
-plt.plot(data.index, predictions[:, 0], label = 'Predicted Diffuse', linestyle='dashed', linewidth=1.5)
-plt.plot(data.index, y[:, 1], label = 'Actual DiffuseSD')
-plt.plot(data.index, predictions[:, 1], label = 'Predicted DiffuseSD', linestyle='dashed', linewidth=1.5)
+plt.plot(data.index, predictions[:, 0], label = 'Predicted Direct', linestyle='dashed', linewidth=1.5)
+plt.plot(data.index, y[:, 1], label = 'Actual Diffuse')
+plt.plot(data.index, predictions[:, 1], label = 'Predicted Diffuse', linestyle='dashed', linewidth=1.5)
 plt.plot(data.index, X[:,4])
 
 plt.legend(loc = 'upper left')
