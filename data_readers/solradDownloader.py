@@ -20,8 +20,8 @@ except ftplib.all_errors as e:
     errorcode_string = str(e).split(None, 1)[0]
 
 #Setting the current working directory to 2019
-#ftp.cwd('/data/radiation/solrad/' + locationName + '/2019/')
-ftp.cwd('/data/radiation/solrad/realtime/' + locationName)
+ftp.cwd('/data/radiation/solrad/' + locationName + '/2019/')
+#ftp.cwd('/data/radiation/solrad/realtime/' + locationName)
 
 directoryName = solrad_directory
 print(directoryName)
@@ -30,8 +30,8 @@ print(directoryName)
 
 os.chdir(directoryName)
 
-dateStart = 19112
-dateEnd =   19113
+dateStart = 19108
+dateEnd =   19108
 
 currentDownloadDate = dateStart;
 

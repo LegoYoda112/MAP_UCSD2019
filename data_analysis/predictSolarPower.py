@@ -10,9 +10,6 @@ import pandas as pd
 import pvlib as pv
 import matplotlib.pyplot as plt
 
-from matplotlib.pyplot import figure
-figure(num=None, figsize=(15, 6), dpi=100)
-
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 
