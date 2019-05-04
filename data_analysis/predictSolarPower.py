@@ -46,8 +46,11 @@ def calcPVWatts(time, location, tilt, azimuth, DNI, DHI, temp, arrayRating):
 
 print('Enter the location of the area you want to predict the solar power for')
 
-lat = '32.9483'
-lon = '-117.12299'
+#lat = '32.9483'
+#lon = '-117.12299'
+
+lat = '32.8632543'
+lon = '-117.2545537'
 #lat = input('Lat: ')
 #lon = input('Lon: ')
 
@@ -158,6 +161,6 @@ plt.legend(loc = 'upper left')
 plt.xlabel('Time')
 plt.show()
 
-#file_name = 'forecastPage/predicted.csv'
-#predictedDF = pd.DataFrame(fileOutput, columns = ["Solar power", "Clear sky"])
-#predictedDF.to_csv(file_name, sep='\t', encoding='utf-8', )
+file_name = 'predicted.csv'
+predictedDF = pd.DataFrame(fileOutput, columns = ["DNI", "DHI", "Clear_Sky", "pvwatts"])
+predictedDF.to_csv(file_name, sep='\t', encoding='utf-8', )
