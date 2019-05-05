@@ -146,9 +146,9 @@ for index in range(0, len(MLP_predicted)):
     DHI = MLP_predicted[index][1]
     temp = (weatherData[index][2] - 32) * (5.0/9.0)
 
-    pvwatts = calcPVWatts(time, SolarLocation, tilt, azimuth, DNI, DHI, temp, 5000)
+    pvwatts = calcPVWatts(time, SolarLocation, tilt, azimuth, DNI, DHI, temp, 8000)
 
-    fileOutput.append([MLP_predicted[index][0], MLP_predicted[index][1], cs['dni'][index], pvwatts])
+    fileOutput.append([cs['dni'][index], MLP_predicted[index][1], MLP_predicted[index][0], pvwatts])
 
 fileOutput = np.array(fileOutput)
 
@@ -162,5 +162,5 @@ plt.xlabel('Time')
 plt.show()
 
 file_name = 'predicted.csv'
-predictedDF = pd.DataFrame(fileOutput, columns = ["DNI", "DHI", "Clear_Sky", "pvwatts"])
-predictedDF.to_csv(file_name, sep='\t', encoding='utf-8', )
+predictedDF = pd.DataFrame(fileOutput, columns = ["Clear_Sky","DHI", "DNI", "pvwatts"])
+predictedDF.to_csv(file_name, sep=',', encoding='utf-8', )

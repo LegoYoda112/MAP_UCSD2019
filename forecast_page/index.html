@@ -35,8 +35,8 @@
         var clearskySum = 0;
 
         for(var i = startHour; (i<endHour+1); i++){
-          predictedSum += csvData[i][1];
-          clearskySum += csvData[i][3];
+          predictedSum += csvData[i][3];
+          clearskySum += csvData[i][1];
         }
 
         var ratio = predictedSum/clearskySum;
@@ -67,29 +67,53 @@
         var solarData = google.visualization.arrayToDataTable(csvData);
         solarData.removeColumns(1,3);
 
-        var options = {
-          title: 'Hanford CA',
-          legend: { position: 'bottom' , textStyle:{color: '#FFF'}},
-          chartArea: {'width': '85%', 'height': '80%'},
-          vAxis: {title: 'Watts', textStyle:{color: '#FFF'}},
-          hAxis: {title: 'Hours', textStyle:{color: '#FFF'}},
-          pointSize: 2,
+        var weatherOptions = {
+          title: 'Solar irradiance predictions',
+          titleTextStyle: {color: '#FFF', fontSize: 30, fontName: 'Rajdhani', bold: true},
+          legend: { position: 'bottom' , textStyle:{color: '#FFF', fontName: 'Roboto', fontSize: 15}},
+          chartArea: {'width': '80%', 'height': '70%'},
+          vAxis: {title: 'Watts',
+                  textStyle:{color: '#FFF', fontName: 'Roboto'},
+                  titleTextStyle: {color: "#FFF", fontName: 'Rajdhani', fontSize: 24}},
+          hAxis: {title: 'Hours',
+                  textStyle:{color: '#FFF', fontName: 'Roboto'},
+                  titleTextStyle: {color: "#FFF", fontName: 'Rajdhani', fontSize: 24}},
+          pointSize: 0,
           animation: {"startup": true},
           series: {
-            0: { lineWidth: 3, color: '#e7711b', areaOpacity: '60%'},
-            1: { lineWidth: 3, color: '#e7711b', areaOpacity: '90%'},
-            2: { lineWidth: 2, color: '#b3c7f9', areaOpacity: 0}
+            2: { lineWidth: 3, color: '#e7711b', areaOpacity: 0.3},
+            1: { lineWidth: 3, color: '#fcc953', areaOpacity: 0.1},
+            0: { lineWidth: 3, color: '#66c9ff', areaOpacity: 0.1}
           },
-          backgroundColor: '#111726'
+          backgroundColor: '#2b3342'
+        };
+
+        var powerOptions = {
+          title: 'Predicted electric output',
+          titleTextStyle: {color: '#FFF', fontSize: 30, fontName: 'Rajdhani', bold: true},
+          legend: { position: 'bottom' , textStyle:{color: '#FFF', fontName: 'Roboto', fontSize: 15}},
+          chartArea: {'width': '75%', 'height': '75%'},
+          vAxis: {title: 'Watts',
+                  textStyle:{color: '#FFF', fontName: 'Roboto'},
+                  titleTextStyle: {color: "#FFF", fontName: 'Rajdhani', fontSize: 24}},
+          hAxis: {title: 'Hours',
+                  textStyle:{color: '#FFF', fontName: 'Roboto'},
+                  titleTextStyle: {color: "#FFF", fontName: 'Rajdhani', fontSize: 24}},
+          pointSize: 5,
+          animation: {"startup": true},
+          series: {
+            0: { lineWidth: 3, color: '#f2d63c', areaOpacity: 0.3},
+          },
+          backgroundColor: '#2b3342',
         };
 
         var chart = new google.visualization.AreaChart(document.getElementById('curve_chart'));
 
-        chart.draw(weatherData, options);
+        chart.draw(weatherData, weatherOptions);
 
         var chart2 = new google.visualization.AreaChart(document.getElementById('solarPower_chart'));
 
-        chart2.draw(solarData,options);
+        chart2.draw(solarData, powerOptions);
 
         document.getElementById('largePercent').innerHTML = percent1+"%";
         document.getElementById('innerSunBar').style.width = percent1+"%";
@@ -133,8 +157,10 @@
         </div>
       </div>
       <div class = "fullWideYellow">
-        <div class = "middleBox"><div id="curve_chart" class = "mainChart"></div></div>
-        <div class = "middleBox"><div id="solarPower_chart" class = "mainChart"></div></div>
+        <div class = "middleBox">
+          <div id="curve_chart" class = "mainChart"></div>
+          <div id="solarPower_chart" class = "mainChart"></div>
+        </div>
       </div>
 
       <div class = "fullWideGrey">
