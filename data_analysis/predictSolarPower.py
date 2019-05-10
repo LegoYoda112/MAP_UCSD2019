@@ -140,23 +140,24 @@ for index in range(0, len(MLP_predicted)):
 
     time = weatherData[index][1]
     hoursOffset = 0
-    tilt = 0
-    azimuth = 0
+    tilt = 20
+    azimuth = 245
     DNI = MLP_predicted[index][0]
     DHI = MLP_predicted[index][1]
     temp = (weatherData[index][2] - 32) * (5.0/9.0)
 
-    pvwatts = calcPVWatts(time, SolarLocation, tilt, azimuth, DNI, DHI, temp, 8000)
+    pvwatts = calcPVWatts(time, SolarLocation, tilt, azimuth, DNI, DHI, temp, 7800)
+
 
     fileOutput.append([cs['dni'][index], MLP_predicted[index][1], MLP_predicted[index][0], pvwatts])
 
 fileOutput = np.array(fileOutput)
 
-#plt.plot(weatherData[:,1],weatherData[:,3], label = 'cloud-amount')
+plt.plot(times,weatherData[:,3], label = 'cloud-amount')
 plt.plot(times, cs['dni'], label = 'Clear sky')
 plt.plot(times, MLP_predicted[:,0], label = 'Predicted')
 plt.plot(times, MLP_predicted[:,1], label = 'Predicted2')
-plt.plot(times, fileOutput[:,3], label = 'Solar power')
+#plt.plot(times, fileOutput[:,3], label = 'Solar power')
 plt.legend(loc = 'upper left')
 plt.xlabel('Time')
 plt.show()

@@ -34,11 +34,11 @@ model.fit(X_train, y_train)
 
 predictions = model.predict(X)
 
-plt.plot(data.index, y[:, 0], label = 'Actual Diffuse')
+plt.plot(data.index, y[:, 0], label = 'Actual Direct')
 plt.plot(data.index, predictions[:, 0], label = 'Predicted Direct', linestyle='dashed', linewidth=1.5)
 plt.plot(data.index, y[:, 1], label = 'Actual Diffuse')
 plt.plot(data.index, predictions[:, 1], label = 'Predicted Diffuse', linestyle='dashed', linewidth=1.5)
-plt.plot(data.index, X[:,4])
+#plt.plot(data.index, X[:,4])
 
 plt.legend(loc = 'upper left')
 plt.show()

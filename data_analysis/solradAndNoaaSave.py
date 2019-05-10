@@ -2,6 +2,7 @@ import pandas as pd
 import re
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 from datetime import datetime
 from datetime import timedelta
 import pvlib as pv
@@ -204,7 +205,7 @@ print(len(noaa_data_array))
 #PLOTTING --------------------
 #plt.plot(hourlySolradData[:,1], label = 'Direct')
 #plt.plot(hourlySolradData[:,1], label = 'Direct')
-plt.plot(hourlySolradData[:,3], label = 'Diffuse')
+#plt.plot(hourlySolradData[:,3], label = 'Diffuse')
 
 #plt.plot(cs['dni'], label = 'Clear sky')
 
@@ -213,16 +214,26 @@ plt.plot(hourlySolradData[:,3], label = 'Diffuse')
 #plt.plot(times, cs['dhi']*(1-noaa_data_array[:,2]/100), label = 'Predicted')
 #plt.plot((100-noaa_data_array[:,2]), label = 'Clouds')
 #
-#plt.plot(times,noaa_data_array[:,1]*3, label = 'temp')
-#plt.plot(noaa_data_array[:,2], label = 'cloud-amount')
-#plt.plot(noaa_data_array[:,0],noaa_data_array[:,3], label = 'wind-speed')
-#plt.plot(noaa_data_array[:,0],noaa_data_array[:,4], label = 'humidity')
-#plt.plot(noaa_data_array[:,0],noaa_data_array[:,5], label = 'probability_of_precipitation')
-#
 
+#f, axarr = plt.subplots(2, sharex=True)
+
+fig = plt.figure()
+
+ax1 = plt.subplot(2, 1, 1)
+plt.plot(times,noaa_data_array[:,1], label = 'temp')
+plt.plot(times, noaa_data_array[:,2], label = 'cloud-amount')
+plt.plot(times, noaa_data_array[:,3], label = 'wind-speed')
 plt.legend(loc = 'upper left')
-plt.ylabel('Watts m^-2')
-plt.xlabel('Time')
+ax2 = plt.subplot(2, 1, 2, sharex = ax1)
+
+plt.plot(times, hourlySolradData[:,1], label = 'Direct')
+plt.plot(times, hourlySolradData[:,3], label = 'Diffuse')
+plt.legend(loc = 'upper left')
+plt.setp(ax1.get_xticklabels(), visible=False)
+
+fig.tight_layout()
+
+
 plt.show()
 
 outputData = []
