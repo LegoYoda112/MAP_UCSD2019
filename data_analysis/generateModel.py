@@ -28,19 +28,34 @@ from sklearn.neural_network import MLPRegressor
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.0)
 
-model = MLPRegressor(max_iter = 200, verbose = True, hidden_layer_sizes=(50,10), solver = 'adam')
+model = MLPRegressor(max_iter = 200, verbose = True, hidden_layer_sizes=(100,50), solver = 'adam')
 
 model.fit(X_train, y_train)
 
 predictions = model.predict(X)
 
-print(np.sum(abs((y[:, 0]- predictions[:, 0])/y[:, 0]))/(len(y)))
+predictionsForError = []
+measuredForError = []
 
-plt.plot(data.index, y[:, 0], label = 'Actual Diffuse')
+for i in range(0, len(y)):
+    if(y[i][0] > 100):
+        measuredForError.append(y[i][0])
+        predictionsForError.append(predictions[i][0])
+
+measuredForError = np.array(measuredForError)
+predictionsForError = np.array(predictionsForError)
+
+plt.plot(measuredForError)
+plt.plot(predictionsForError)
+plt.show()
+
+print(np.sum(abs((measuredForError[:]- predictionsForError[:]))/(len(measuredForError))))
+
+plt.plot(data.index, y[:, 0], label = 'Actual Direct')
 plt.plot(data.index, predictions[:, 0], label = 'Predicted Direct', linestyle='dashed', linewidth=1.5)
-plt.plot(data.index, (predictions[:, 0] - y[:, 0]), label = "Error")
-#plt.plot(data.index, y[:, 1], label = 'Actual Diffuse')
-#plt.plot(data.index, predictions[:, 1], label = 'Predicted Diffuse', linestyle='dashed', linewidth=1.5)
+#plt.plot(data.index, (predictions[:, 0] - y[:, 0]), label = "Error")
+plt.plot(data.index, y[:, 1], label = 'Actual Diffuse')
+plt.plot(data.index, predictions[:, 1], label = 'Predicted Diffuse', linestyle='dashed', linewidth=1.5)
 #plt.plot(data.index, X[:,4])
 
 plt.legend(loc = 'upper left')

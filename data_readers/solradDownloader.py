@@ -30,8 +30,8 @@ print(directoryName)
 
 os.chdir(directoryName)
 
-dateStart = 19112
-dateEnd =   19112
+dateStart = 19122
+dateEnd =   19129
 
 currentDownloadDate = dateStart;
 

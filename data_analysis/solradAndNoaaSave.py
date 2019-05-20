@@ -84,7 +84,7 @@ def readSolradRange(startDay, endDay):
     return outputData
 
 #Read the solrad data
-solradData = readSolradRange(19060,19122)
+solradData = readSolradRange(19060,19129)
 
 #Convert the solrad data into houly averages.
 hourlySolradData = []
@@ -156,7 +156,7 @@ noaa_data_array = np.array(noaa_data_array)
 #LINING THE ARRAYS UP
 #We need to make sure each array (solrad and noaa) is the same length and each index corrisponds to the same entry
 startDate = datetime(2019,3,1)
-endDate = datetime(2019,5,1)
+endDate = datetime(2019,5,9)
 
 #Trim the NOAA data
 trimmed_noaa_data_array = []
