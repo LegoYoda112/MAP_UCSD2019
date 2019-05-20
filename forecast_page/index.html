@@ -28,6 +28,10 @@
         csvData[i][2] = parseFloat(csvData[i][2]);
         csvData[i][3] = parseFloat(csvData[i][3]);
         csvData[i][4] = parseFloat(csvData[i][4]);
+
+        if(csvData[i][4]<100){
+          csvData[i][4] = 0
+        }
       }
 
       function calcSolarPercent(startHour, endHour) {
@@ -49,15 +53,95 @@
         return percent;
       }
 
-      var percent1 = calcSolarPercent(1,24);
-      var percent2 = calcSolarPercent(24,24*2);
-      var percent3 = calcSolarPercent(24*2,24*3);
-      var percent4 = calcSolarPercent(24*3,24*4);
-      var percent5 = calcSolarPercent(24*4,24*5);
-      var percent6 = calcSolarPercent(24*5,24*6);
-      var percent7 = calcSolarPercent(24*6,24*7);
+      var energyAvalible = 0;
+      var canUse = [["","Solar Power", "Oven", "Dishwasher", "Clothes Dryer", "Vacuum"]];
 
+      var ovenWatts = 2400;
+      var ovenStart = 0;
+      var ovenEnd = 0;
 
+      var dishwasherWatts = 1800;
+      var dishwasherStart = 0;
+      var dishwasherEnd = 0;
+
+      var clothesDryerWatts = 3000;
+      var clothesDryerStart = 0;
+      var clothesDryerEnd = 0;
+
+      var vacuumWatts = 1400;
+      var vacuumStart = 0;
+      var vacuumEnd = 0;
+
+      var fridgeWatts = 180;
+      var freezerWatts = 200;
+      var miscWatts = 20; //Wi-Fi Router:6, Plugged in clock:2, Lights: 10, etc
+
+      var airConditioningWatts = 3500;
+
+      for(var i = 14; i<=35; i++){
+        var canUseAppend = [];
+
+        energyAvalible = csvData[i][4] - (fridgeWatts + freezerWatts + miscWatts);
+
+        canUseAppend[0] = i;
+        canUseAppend[1] = energyAvalible;
+
+        //OVEN
+        if(energyAvalible>ovenWatts){
+          canUseAppend[2] = ovenWatts;
+          if(ovenStart == 0){
+            ovenStart = i;
+          }else{
+            ovenEnd = i;
+          }
+        }else{
+          canUseAppend[2] = 0;
+        }
+
+        //Dishwasher
+        if(energyAvalible>dishwasherWatts){
+          canUseAppend[3] = dishwasherWatts;
+          if(dishwasherStart == 0){
+            dishwasherStart = i;
+          }else{
+            dishwasherEnd = i;
+          }
+        }else{
+          canUseAppend[3] = 0;
+        }
+
+        //ClothesDryer
+        if(energyAvalible>clothesDryerWatts){
+          canUseAppend[4] = clothesDryerWatts;
+          if(clothesDryerStart == 0){
+          clothesDryerrStart = i;
+          }else{
+            clothesDryerEnd = i;
+          }
+        }else{
+          canUseAppend[4] = 0;
+        }
+
+        //Vacuum
+        if(energyAvalible>vacuumWatts){
+          canUseAppend[5] = vacuumWatts;
+          if(vacuumStart == 0){
+          cvacuumStart = i;
+          }else{
+            vacuumEnd = i;
+          }
+        }else{
+          canUseAppend[5] = 0;
+        }
+
+         canUse.push(canUseAppend);
+      }
+
+      console.log(canUse);
+      console.log("Oven Start: " + ovenStart + " End: " + ovenEnd);
+      console.log("Dishwasher Start: " + dishwasherStart + " End: " + dishwasherEnd);
+      console.log("Clothes Dryer Start: " + clothesDryerStart + " End: " + clothesDryerEnd);
+      console.log("Vacuum Start: " + vacuumStart + " End: " + vacuumEnd);
 
       function drawChart() {
 
@@ -67,12 +151,14 @@
         var solarData = google.visualization.arrayToDataTable(csvData);
         solarData.removeColumns(1,3);
 
+        var canUseData = google.visualization.arrayToDataTable(canUse);
+
         var weatherOptions = {
           title: 'Solar irradiance predictions',
           titleTextStyle: {color: '#FFF', fontSize: 30, fontName: 'Rajdhani', bold: true},
           legend: { position: 'bottom' , textStyle:{color: '#FFF', fontName: 'Roboto', fontSize: 15}},
           chartArea: {'width': '75%', 'height': '75%'},
-          vAxis: {title: 'Watts',
+          vAxis: {title: 'Watts per Meter Squared',
                   textStyle:{color: '#FFF', fontName: 'Roboto'},
                   titleTextStyle: {color: "#FFF", fontName: 'Rajdhani', fontSize: 24}},
           hAxis: {title: 'Hours',
@@ -86,7 +172,7 @@
             0: { lineWidth: 3, color: '#66c9ff', areaOpacity: 0.1}
           },
           backgroundColor: '#2b3342'
-        };
+        }
 
         var powerOptions = {
           title: 'Predicted electric output',
@@ -105,7 +191,7 @@
             0: { lineWidth: 3, color: '#f2d63c', areaOpacity: 0.3},
           },
           backgroundColor: '#2b3342',
-        };
+        }
 
         var chart = new google.visualization.AreaChart(document.getElementById('curve_chart'));
 
@@ -114,6 +200,17 @@
         var chart2 = new google.visualization.AreaChart(document.getElementById('solarPower_chart'));
 
         chart2.draw(solarData, powerOptions);
+
+        var chart3 = new google.visualization.AreaChart(document.getElementById('applianceUse_chart'));
+        chart3.draw(canUseData, powerOptions);
+
+        var percent1 = calcSolarPercent(1,24);
+        var percent2 = calcSolarPercent(24,24*2);
+        var percent3 = calcSolarPercent(24*2,24*3);
+        var percent4 = calcSolarPercent(24*3,24*4);
+        var percent5 = calcSolarPercent(24*4,24*5);
+        var percent6 = calcSolarPercent(24*5,24*6);
+        var percent7 = calcSolarPercent(24*6,24*7);
 
         document.getElementById('largePercent').innerHTML = percent1+"%";
         document.getElementById('innerSunBar').style.width = percent1+"%";
@@ -160,6 +257,7 @@
         <div class = "middleBox">
           <div id="curve_chart" class = "mainChart"></div>
           <div id="solarPower_chart" class = "mainChart"></div>
+          <div id="applianceUse_chart" class = "mainChart"></div>
         </div>
       </div>
 

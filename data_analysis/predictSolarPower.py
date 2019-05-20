@@ -178,5 +178,5 @@ fig.tight_layout()
 plt.show()
 
 file_name = 'predicted.csv'
-predictedDF = pd.DataFrame(fileOutput, columns = ["Clear_Sky","DHI", "DNI", "pvwatts"])
+predictedDF = pd.DataFrame(fileOutput, columns = ["Clear Sky","DHI", "DNI", "Output power"])
 predictedDF.to_csv(file_name, sep=',', encoding='utf-8', )
