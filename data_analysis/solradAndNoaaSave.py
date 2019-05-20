@@ -233,7 +233,6 @@ plt.setp(ax1.get_xticklabels(), visible=False)
 
 fig.tight_layout()
 
-
 plt.show()
 
 outputData = []
