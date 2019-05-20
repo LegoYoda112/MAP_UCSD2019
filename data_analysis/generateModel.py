@@ -26,7 +26,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPRegressor
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.0)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
 model = MLPRegressor(max_iter = 200, verbose = True, hidden_layer_sizes=(50,10), solver = 'adam')
 
@@ -36,13 +36,16 @@ predictions = model.predict(X)
 
 print(np.sum(abs((y[:, 0]- predictions[:, 0])/y[:, 0]))/(len(y)))
 
+
+
 plt.plot(data.index, y[:, 0], label = 'Actual Diffuse')
 plt.plot(data.index, predictions[:, 0], label = 'Predicted Direct', linestyle='dashed', linewidth=1.5)
-plt.plot(data.index, (predictions[:, 0] - y[:, 0]), label = "Error")
-#plt.plot(data.index, y[:, 1], label = 'Actual Diffuse')
-#plt.plot(data.index, predictions[:, 1], label = 'Predicted Diffuse', linestyle='dashed', linewidth=1.5)
+#plt.plot(data.index, (predictions[:, 0] - y[:, 0]), label = "Error")
+plt.plot(data.index, y[:, 1], label = 'Actual Diffuse')
+plt.plot(data.index, predictions[:, 1], label = 'Predicted Diffuse', linestyle='dashed', linewidth=1.5)
 #plt.plot(data.index, X[:,4])
 
+plt.tight_layout()
 plt.legend(loc = 'upper left')
 plt.show()
 

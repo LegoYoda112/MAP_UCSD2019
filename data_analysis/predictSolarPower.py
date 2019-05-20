@@ -124,7 +124,7 @@ cs = SolarLocation.get_clearsky(times, model='ineichen', linke_turbidity=3)
 predictInputs = []
 
 for index in range(0, len(weatherData)):
-    predictInputs.append([weatherData[index][2],weatherData[index][3], weatherData[index][5], weatherData[index][6], cs['dni'][index]])
+    predictInputs.append([weatherData[index][2],weatherData[index][3], weatherData[index][4], weatherData[index][5], weatherData[index][6], cs['dni'][index]])
 
 #Reload the model CHANGE THE FILE NAMES BEFORE UPLOADING
 modelReloaded = load('MLPRegressor_model.joblib')
@@ -153,13 +153,28 @@ for index in range(0, len(MLP_predicted)):
 
 fileOutput = np.array(fileOutput)
 
-plt.plot(times,weatherData[:,3], label = 'cloud-amount')
-plt.plot(times, cs['dni'], label = 'Clear sky')
-plt.plot(times, MLP_predicted[:,0], label = 'Predicted')
-plt.plot(times, MLP_predicted[:,1], label = 'Predicted2')
-#plt.plot(times, fileOutput[:,3], label = 'Solar power')
+# plt.plot(times, cs['dni'], label = 'Clear sky')
+# plt.plot(times, MLP_predicted[:,0], label = 'Predicted')
+# plt.plot(times, MLP_predicted[:,1], label = 'Predicted2')
+# #plt.plot(times, fileOutput[:,3], label = 'Solar power')
+# plt.legend(loc = 'upper left')
+# plt.xlabel('Time')
+# plt.show()
+
+fig = plt.figure()
+
+ax1 = plt.subplot(2, 1, 1)
+plt.plot(times, fileOutput[:,2], label = 'Predicted Direct')
+plt.plot(times, fileOutput[:,1], label = 'Predicted Diffuse')
 plt.legend(loc = 'upper left')
-plt.xlabel('Time')
+ax2 = plt.subplot(2, 1, 2, sharex = ax1)
+
+plt.plot(times, fileOutput[:,3], label = 'Predicted solar power')
+plt.legend(loc = 'upper left')
+plt.setp(ax1.get_xticklabels(), visible=False)
+
+fig.tight_layout()
+
 plt.show()
 
 file_name = 'predicted.csv'
