@@ -22,25 +22,37 @@
       csvData = Papa.parse(loadFile('predicted.csv'));
       csvData = csvData.data;
 
-      for(var i = 1; i < csvData.length; i++){
-        csvData[i][0] = parseFloat(csvData[i][0]);
-        csvData[i][1] = parseFloat(csvData[i][1]);
-        csvData[i][2] = parseFloat(csvData[i][2]);
-        csvData[i][3] = parseFloat(csvData[i][3]);
-        csvData[i][4] = parseFloat(csvData[i][4]);
+      parsedData = [["index", "Clear Sky", "GHI", "DNI", "Output power"]]
 
-        if(csvData[i][4]<100){
-          csvData[i][4] = 0
+      for(var i = 1; i < csvData.length-1; i++){
+        parsedRow = []
+        //parsedRow[0] = parseFloat(csvData[i][0]);
+        parsedRow[1] = parseFloat(csvData[i][1]);
+        parsedRow[2] = parseFloat(csvData[i][2]);
+        parsedRow[3] = parseFloat(csvData[i][3]);
+        parsedRow[4] = parseFloat(csvData[i][4]);
+
+        date = new Date(csvData[i][7], csvData[i][6]-1, csvData[i][5], csvData[i][8]-7);
+
+        parsedRow[0] = date;
+
+        if(parsedRow[4]<100){
+          parsedRow[4] = 0;
         }
+
+        parsedData.push(parsedRow);
       }
+
+      console.log(parsedData);
+      //csvData = parsedData;
 
       function calcSolarPercent(startHour, endHour) {
         var predictedSum = 0;
         var clearskySum = 0;
 
         for(var i = startHour; (i<endHour+1); i++){
-          predictedSum += csvData[i][3];
-          clearskySum += csvData[i][1];
+          predictedSum += parsedData[i][3];
+          clearskySum += parsedData[i][1];
         }
 
         var ratio = predictedSum/clearskySum;
@@ -78,12 +90,15 @@
 
       var airConditioningWatts = 3500;
 
-      for(var i = 14; i<=35; i++){
+      for(var i = 0; i<=20; i++){
         var canUseAppend = [];
 
         energyAvalible = csvData[i][4] - (fridgeWatts + freezerWatts + miscWatts);
 
-        canUseAppend[0] = i;
+        date = new Date(csvData[i][7], csvData[i][6]-1, csvData[i][5], csvData[i][8]-7);
+        //parsedRow[0] = date;
+
+        canUseAppend[0] = date;
         canUseAppend[1] = energyAvalible;
 
         //OVEN
@@ -145,10 +160,10 @@
 
       function drawChart() {
 
-        var weatherData = google.visualization.arrayToDataTable(csvData);
+        var weatherData = google.visualization.arrayToDataTable(parsedData);
         weatherData.removeColumn(4);
 
-        var solarData = google.visualization.arrayToDataTable(csvData);
+        var solarData = google.visualization.arrayToDataTable(parsedData);
         solarData.removeColumns(1,3);
 
         var canUseData = google.visualization.arrayToDataTable(canUse);
@@ -161,7 +176,7 @@
           vAxis: {title: 'Watts per Meter Squared',
                   textStyle:{color: '#FFF', fontName: 'Roboto'},
                   titleTextStyle: {color: "#FFF", fontName: 'Rajdhani', fontSize: 24}},
-          hAxis: {title: 'Hours',
+          hAxis: {title: '',
                   textStyle:{color: '#FFF', fontName: 'Roboto'},
                   titleTextStyle: {color: "#FFF", fontName: 'Rajdhani', fontSize: 24}},
           pointSize: 0,
@@ -182,13 +197,13 @@
           vAxis: {title: 'Watts',
                   textStyle:{color: '#FFF', fontName: 'Roboto'},
                   titleTextStyle: {color: "#FFF", fontName: 'Rajdhani', fontSize: 24}},
-          hAxis: {title: 'Hours',
+          hAxis: {title: '',
                   textStyle:{color: '#FFF', fontName: 'Roboto'},
                   titleTextStyle: {color: "#FFF", fontName: 'Rajdhani', fontSize: 24}},
-          pointSize: 5,
+          pointSize: 0,
           animation: {"startup": true},
           series: {
-            0: { lineWidth: 3, color: '#f2d63c', areaOpacity: 0.3},
+            0: { lineWidth: 3, color: '#d8cf20', areaOpacity: 0.6},
           },
           backgroundColor: '#2b3342',
         }

@@ -49,8 +49,8 @@ print('Enter the location of the area you want to predict the solar power for')
 #lat = '32.9483'
 #lon = '-117.12299'
 
-lat = '32.8632543'
-lon = '-117.2545537'
+lat = '32.86'
+lon = '-117.25'
 #lat = input('Lat: ')
 #lon = input('Lon: ')
 
@@ -61,6 +61,8 @@ datetime_object = datetime.now()
 
 #------forecast.weather.gov------
 url = 'https://forecast.weather.gov/MapClick.php?lat='+lat+'&lon='+lon+'&FcstType=digitalDWML'
+
+#https://forecast.weather.gov/MapClick.php?lat=32.8632543&lon=-117.2545537&FcstType=digitalDWML
 
 #Pulls the html of the page
 response = get(url)
@@ -149,7 +151,7 @@ for index in range(0, len(MLP_predicted)):
     pvwatts = calcPVWatts(time, SolarLocation, tilt, azimuth, DNI, DHI, temp, 7800)
 
 
-    fileOutput.append([cs['dni'][index], MLP_predicted[index][1], MLP_predicted[index][0], pvwatts])
+    fileOutput.append([cs['dni'][index], MLP_predicted[index][1], MLP_predicted[index][0], pvwatts, weatherData[index][1].day, weatherData[index][1].month, weatherData[index][1].year, weatherData[index][1].hour])
 
 fileOutput = np.array(fileOutput)
 
@@ -178,5 +180,5 @@ fig.tight_layout()
 plt.show()
 
 file_name = 'predicted.csv'
-predictedDF = pd.DataFrame(fileOutput, columns = ["Clear Sky","DHI", "DNI", "Output power"])
+predictedDF = pd.DataFrame(fileOutput, columns = ["Clear Sky","DHI", "DNI", "Output power", "day", "month", "year", "hour"])
 predictedDF.to_csv(file_name, sep=',', encoding='utf-8', )
